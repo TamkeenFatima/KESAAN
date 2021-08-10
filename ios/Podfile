@@ -13,6 +13,7 @@ target 'KESAAN' do
   )
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+  pod 'RNSVG', :path => '../node_modules/react-native-svg'
 
   target 'KESAANTests' do
     inherit! :complete
