@@ -2,7 +2,7 @@ import React from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 
-import DashboardScreen from '../Screens/DashboardScreen';
+import HomeScreen from '../Screens/HomeScreen';
 import AdvisoryScreen from '../Screens/AdvisoryScreen';
 import LinksScreen from '../Screens/LinksScreen';
 import FeedbackScreen from '../Screens/FeedbackScreen';
@@ -18,7 +18,7 @@ const BottomTabScreens = () => {
         >
             <Tab.Screen
                 name="Home"
-                component={DashboardScreen}
+                component={HomeScreen}
                 options={{
                     title: 'Home',
                     tabBarLabel: 'Home',
