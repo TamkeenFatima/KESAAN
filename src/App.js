@@ -9,31 +9,24 @@
 import React from 'react';
 
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 
 import {
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
+  Image,
   Text,
   useColorScheme,
   View,
 } from 'react-native';
 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Header } from 'react-native-elements/dist/header/Header';
 
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
-import { Icon } from 'react-native-vector-icons/Ionicons';
-import Logo from 'svg';
-
-import DashboardScreen from './Screens/DashboardScreen';
-import AdvisoryScreen from './Screens/AdvisoryScreen';
-import LinksScreen from './Screens/LinksScreen';
-import FeedbackScreen from './Screens/FeedbackScreen';
+import BottomTabScreens from './components/BottomTabs';
+import SettingsScreen from './Screens/SettingsScreen'
 
 const theme = {
   ...DefaultTheme,
@@ -45,25 +38,15 @@ const theme = {
   },
 };
 
-const DashboardStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
-const Tab = createMaterialBottomTabNavigator();
 
-const DashboardStackScreen = ({navigation}) => {
+function LogoTitle() {
   return (
-    <DashboardStack.Navigator screenOptions={{
-      headerStyle: {
-        backgroundColor: '#cbeedf',
-      },
-      headerTintColor: '#fff',
-      headerTitleStyle: {
-        fontWeight: 'bold'
-      }
-    }}>
-      <DashboardStack.Screen name="Wether Today" component={DashboardScreen} />
-      <DashboardStack.Screen name="Feedback" component={FeedbackScreen} />
-    </DashboardStack.Navigator>
-  )
+    <Image
+      style={{ width: 200, height: 50 }}
+      source={require('../assets/png/Logo.png')}
+    />
+  );
 }
 
 const App = () => {
@@ -72,26 +55,22 @@ const App = () => {
     <SafeAreaProvider>
       <NavigationContainer>
         <PaperProvider theme={theme}>
-        <StatusBar barStyle='dark-content' backgroundColor="green" />
+        <StatusBar barStyle='dark-content' backgroundColor="gray" />
 
-        <Header
-          placement="left"
-          barStyle='light-content'
-          backgroundColor="green"
-          centerComponent={{ Logo }} />
-        <Drawer.Navigator initialRouteName="Dashboard" screenOptions={{
+        <Drawer.Navigator initialRouteName="Home" screenOptions={{
         headerStyle: {
-          backgroundColor: '#009387',
+          backgroundColor: '#000',
         },
         headerTintColor: '#fff',
-        headerTitleStyle: {
-          fontWeight: 'bold'
-        }
-      }}>
-          <Drawer.Screen name="Dashboard" component={DashboardStackScreen} />
-          <Drawer.Screen name="Agro-Advisory" component={AdvisoryScreen} />
-          <Drawer.Screen name="Useful Links" component={LinksScreen} />
+        headerTitle: props => <LogoTitle {...props} />,
+      }} >
+          <Drawer.Screen name="HOME" component={BottomTabScreens} />
+          <Drawer.Screen name="Settings" component={SettingsScreen} />
         </Drawer.Navigator>
+
+        <View backgroundColor='gray'>
+
+        </View>
 
         </PaperProvider>
       </NavigationContainer>
