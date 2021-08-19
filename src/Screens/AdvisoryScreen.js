@@ -49,27 +49,27 @@ export default function AdvisoryScreen({navigation}) {
                         BgImg = bgImg;
                     }
                     if ( item.name == 'Rice') {
-                        BgImg = require('../../assets/png/rice.jpg');
+                        BgImg = require('../../assets/images/rice.jpg');
                     }
                     else if ( item.name == 'Fodder') {
-                        BgImg = require('../../assets/png/fodder.jpg');
+                        BgImg = require('../../assets/images/fodder.jpg');
                     }
                     else if ( item.name == 'Sugarcane') {
-                        BgImg = require('../../assets/png/sugarcane.jpg');
+                        BgImg = require('../../assets/images/sugarcane.jpg');
                     }
                     else if ( item.name == 'Vegetables') {
-                        BgImg = require('../../assets/png/vegetables.png');
+                        BgImg = require('../../assets/images/vegetables.png');
                     }
                     else if ( item.name == 'Cattle') {
-                        BgImg = require('../../assets/png/cattle.jpg');
+                        BgImg = require('../../assets/images/cattle.jpg');
                     }
                     else if ( item.name == 'General Advisory') {
-                        BgImg = require('../../assets/png/general.jpg');
+                        BgImg = require('../../assets/images/general.jpg');
                     }
 
                     return (
                         <View
-                            style={{width: windowWidth, height: windowHeight-100}}
+                            style={{width: windowWidth, height: windowHeight-195.2}}
                             key={item.id}
                         >
                             <ImageBackground
@@ -100,9 +100,9 @@ export default function AdvisoryScreen({navigation}) {
                     const width = scrollY.interpolate(
                         {
                             inputRange: [
-                                windowWidth * (index-1),
-                                windowWidth * index,
-                                windowWidth * (index+1)
+                                (windowHeight-195.2) * (index-1),
+                                (windowHeight-195.2) * index,
+                                (windowHeight-195.2) * (index+1)
                             ],
                             outputRange: [
                                 5, 12, 5
