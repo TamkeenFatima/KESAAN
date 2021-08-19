@@ -24,7 +24,10 @@ export default function LoginScreen1() {
           <View style={styles.centerizedView}>
             <View style={styles.authBox}>
               <View style={styles.logoBox}>
-                  <Text style={{fontSize:25,fontFamily:'times new roman', fontWeight:'bold',color:'#fff',}}>KESAAN</Text>
+                    <Image
+                    style={{ width: 200, height: 50 , justifyContent:'center', alignItems:'center'}}
+                    source={require('../../assets/images/Logo.png')}
+                   />
               </View>
               <Text style={styles.registerTitleText}>Register</Text>
               <View style={styles.hr}></View>
@@ -144,7 +147,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   logoBox: {
-    width: 120,
+    width: 200,
     height: 120,
     backgroundColor: '#eb4d4b',
     borderRadius: 1000,
