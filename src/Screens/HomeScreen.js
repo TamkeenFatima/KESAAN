@@ -54,11 +54,11 @@ export default function HomeScreen({navigation}) {
                                 </View>
                                 <View style={{paddingLeft: 20, paddingTop: 20}}>
                                     <View style={{flexDirection: 'row'}}>
-                                        <Icon name="caret-up" color='#57fea8' size={40} />
+                                        <Icon name="caret-up" color='#ee8755' size={40} />
                                         <Text style={[styles.temperature, {fontSize: 30}]}>{Weather.maxTemperature}</Text>
                                     </View>
                                     <View style={{flexDirection: 'row'}}>
-                                        <Icon name="caret-down" color='#fe4f49' size={40} />
+                                        <Icon name="caret-down" color='#55d3ee' size={40} />
                                         <Text style={[styles.temperature, {fontSize: 30}]}>{Weather.minTemperature}</Text>
                                     </View>
                                 </View>
