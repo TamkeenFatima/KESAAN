@@ -366,6 +366,7 @@ export default function FeedbackScreen({navigation}) {
                                     <Text style={styles.inputLabel}>{Feedback.ratings.q}</Text>
                                     <AirbnbRating 
                                         size={20}
+                                        defaultRating={0}
                                     />
                                 </View>
                                 <TouchableOpacity style={styles.submitButton}>
