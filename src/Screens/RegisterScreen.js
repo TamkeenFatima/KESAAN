@@ -9,17 +9,32 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
+  ImageBackground,
   ScrollView,
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 
-export default function LoginScreen1() {
+export default function LoginScreen1({navigation}) {
   return (
     
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <ImageBackground
+        source={require('../../assets/images/grass.png')}
+        style={{
+            flex: 1,
+            }}
+      >
       <View style={styles.container}>
-        <View style={styles.bigCircle}></View>
-        <View style={styles.smallCircle}></View>
+        <Image
+          style={styles.bigCircle}
+          source={require('../../assets/images/grass.png')}
+        />
+        <Image
+          style={styles.smallCircle}
+          source={require('../../assets/images/grass.png')}
+        />
+        {/* <View style={styles.bigCircle}></View>
+        <View style={styles.smallCircle}></View> */}
         <ScrollView>
           <View style={styles.centerizedView}>
             <View style={styles.authBox}>
@@ -89,15 +104,20 @@ export default function LoginScreen1() {
               <TouchableOpacity style={styles.registerButton}>
                 <Text style={styles.registerButtonText}>Register</Text>
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={()=> {
+                    navigation.navigate('LogIn')
+                }}
+              >
                 <Text style={styles.loginText}>
-                  Don't have an account? Login Now
+                  Already have an account? Login Now
                 </Text>
               </TouchableOpacity>
             </View>
           </View>
         </ScrollView>
       </View>
+      </ImageBackground>
     </TouchableWithoutFeedback>
     
   );
@@ -107,11 +127,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
   },
   bigCircle: {
     width: Dimensions.get('window').height * 0.7,
     height: Dimensions.get('window').height * 0.7,
-    backgroundColor: '#0A5E2AFF',
+    //backgroundColor: '#0A5E2AFF',
     borderRadius: 1000,
     position: 'absolute',
     right: Dimensions.get('window').width * 0.25,
@@ -120,7 +141,7 @@ const styles = StyleSheet.create({
   smallCircle: {
     width: Dimensions.get('window').height * 0.4,
     height: Dimensions.get('window').height * 0.4,
-    backgroundColor: '#0A5E2AFF',
+    //backgroundColor: '#0A5E2AFF',
     borderRadius: 1000,
     position: 'absolute',
     bottom: Dimensions.get('window').width * -0.2,
