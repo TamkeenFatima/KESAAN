@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -25,8 +25,12 @@ import {
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import RootStackScreen from './components/RootStackScreen';
 import BottomTabScreens from './components/BottomTabs';
-import SettingsScreen from './Screens/SettingsScreen'
+import SettingsScreen from './Screens/SettingsScreen';
+import SplashScreen from './Screens/SplashScreen';
+
+import { AuthContext } from './components/context';
 
 const theme = {
   ...DefaultTheme,
@@ -50,14 +54,41 @@ function LogoTitle() {
 }
 
 const App = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [userToken, setUserToken] = useState(null);
 
+  const authContext = useMemo(() => {
+    signIn: () => {
+      setUserToken('fgh');
+      setIsLoading(false);
+    }
+    signOut: () => {
+      setUserToken(null);
+      setIsLoading(false);
+    }
+    register: () => {
+      setUserToken('fgh');
+      setIsLoading(false);
+    }
+  })
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 5000);
+  }, [])
+
+  if ( isLoading ) {
+    return <SplashScreen />;
+  }
   return (
     <SafeAreaProvider>
+      <AuthContext.Provider value={authContext}>
       <NavigationContainer>
         <PaperProvider theme={theme}>
         <StatusBar barStyle='dark-content' backgroundColor="gray" />
-
-        <Drawer.Navigator initialRouteName="Home" screenOptions={{
+        <RootStackScreen />
+        {/* <Drawer.Navigator initialRouteName="Home" screenOptions={{
         headerStyle: {
           backgroundColor: '#000',
         },
@@ -66,7 +97,7 @@ const App = () => {
       }} >
           <Drawer.Screen name="HOME" component={BottomTabScreens} />
           <Drawer.Screen name="Settings" component={SettingsScreen} />
-        </Drawer.Navigator>
+        </Drawer.Navigator> */}
 
         <View backgroundColor='gray'>
 
@@ -74,6 +105,7 @@ const App = () => {
 
         </PaperProvider>
       </NavigationContainer>
+      </AuthContext.Provider>
     </SafeAreaProvider>
   );
 };
