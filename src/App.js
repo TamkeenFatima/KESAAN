@@ -164,6 +164,9 @@ const App = () => {
       try {
         userToken = await AsyncStorage.getItem('userToken')
         isFirstRegistration = JSON.parse( await AsyncStorage.getItem('isFirstRegistration') )
+        if ( isFirstRegistration == null ) {
+          isFirstRegistration = true;
+        }
       } catch(e) {
         console.log(e);
       }
