@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useContext } from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,11 +10,17 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   ImageBackground,
-  ScrollView,
-  Alert,
 } from 'react-native';
 
+import { AuthContext } from '../components/context';
+
 export default function LoginScreen({navigation}) {
+    const { logIn } = useContext(AuthContext);
+    const [mobileNo, setMobileNo] = useState(0);
+
+    const handleLogIn = (mobile) => {
+        logIn(mobile);
+    }
     return (
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <ImageBackground
@@ -47,9 +53,13 @@ export default function LoginScreen({navigation}) {
                                     autoCapitalize='none'
                                     keyboardType="number-pad"
                                     textContentType='telephoneNumber'
+                                    onChangeText={(value) => setMobileNo(value)}
                                 />
                             </View>
-                            <TouchableOpacity style={styles.loginButton}>
+                            <TouchableOpacity
+                                style={styles.loginButton}
+                                onPress={() => {handleLogIn(mobileNo)}}
+                            >
                                 <Text style={styles.loginButtonText}>Log In</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
@@ -112,8 +122,8 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     logoBox: {
-        width: 120,
-        height: 120,
+        width: 150,
+        height: 90,
         backgroundColor: '#eb4d4b',
         borderRadius: 1000,
         alignSelf: 'center',

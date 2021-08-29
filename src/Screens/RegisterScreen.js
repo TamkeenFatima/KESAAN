@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -11,10 +11,81 @@ import {
   Keyboard,
   ImageBackground,
   ScrollView,
+  Alert
 } from 'react-native';
-import { Icon } from 'react-native-elements';
+import DeviceInfo from 'react-native-device-info';
+import { AuthContext } from '../components/context';
+// import IMEI from 'react-native-imei';
 
 export default function LoginScreen1({navigation}) {
+
+  const os = DeviceInfo.getSystemName();
+  const version = DeviceInfo.getSystemVersion();
+  const model = DeviceInfo.getModel();
+  // const imei = IMEI.getImei();
+
+  const [info, setInfo] = useState({
+    location_id: 0,
+    sel_lang: '',
+    user_name: '',
+    user_mobile: '',
+    mob_imei_no: '',
+    mob_model: model,
+    mob_os: os,
+    os_version: version,
+    registered_on: '',
+  })
+
+  useEffect(() => {
+    let currentTime = new Date();
+    currentTime = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds() + ', ' + currentTime.getDate() + '/' + (currentTime.getMonth()+1) + '/' + currentTime.getFullYear()
+    setInfo({
+      ...info,
+      registered_on: currentTime,
+    })
+  }, [handleSubmit])
+
+  const { register } = useContext(AuthContext);
+
+  const handleSubmit = () => {
+    if ( (info.user_name.length == 0) && (info.user_mobile.length == 0) ) {
+      Alert.alert("Name and phone number field cannot be empty")
+    }
+    else if ( info.user_name.length == 0 ) {
+      Alert.alert("Your name is required!")
+    }
+    else if ( info.user_mobile.length <10 ) {
+      Alert.alert("Invalid mobile number. Please enter correct number.")
+    }
+    else {
+      register(info);
+    }
+  }
+
+  const checkName = (val) => {
+    const letters = ['', ' ', 'A', 'a', 'B', 'b', 'C', 'c', 'D', 'd', 'E', 'e', 'F', 'f', 'G', 'g', 'H', 'h', 'I', 'i', 'J', 'j', 'K', 'k', 'L', 'l', 'M', 'm', 'N', 'n', 'O', 'o', 'P', 'p', 'Q', 'q', 'R', 'r', 'S', 's', 'T', 't', 'U', 'u', 'V', 'v', 'W', 'w', 'X', 'x', 'Y', 'y', 'Z', 'z', 'अ', 'आ', 'इ', 'ई', 'उ', 'ऊ', 'ा',' ि', ' ी', ' ु', ' ू', 'ऋ', 'ॠ', 'ऌ', 'ॡ', 'ए', 'ऐ', 'ओ', 'औ', ' ृ', ' ॄ', ' ॢ', ' ॣ', ' े', ' ै', ' ो', ' ौ', ' ँ', ' ं', ' ः', ' ़', 'क', 'ख', 'ग', 'घ', 'ङ', 'च', 'छ', 'ज', 'झ', 'ञ', 'ट', 'ठ', 'ड', 'ढ', 'ण', 'त', 'थ', 'द', 'ध', 'न', 'प', 'फ', 'ब', 'भ', 'म', 'क़', 'ख़', 'ग़', 'ज़', 'ड़', 'ढ़', 'फ़', 'य', 'र', 'ल', 'ळ', 'व', 'ह', 'श', 'ष', 'स', 'ऱ', 'ऴ', 'ऍ', 'ऑ', 'ऎ', 'ऒ', ' ॅ', ' ॉ', ' ॆ', ' ॊ'];
+    letters.forEach(char => {
+      if ( char === val.slice(-1) ) {
+        setInfo({
+          ...info,
+          user_name: val,
+        })
+      }
+    });
+  }
+
+  const mobileNoCheck = (val) => {
+    const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    for ( let i=0; i<numbers.length; i++ ) {
+      if ( i == val.slice(-1) ) {
+        setInfo({
+          ...info,
+          user_mobile: val,
+        })
+      }
+    }
+  }
+
   return (
     
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -33,8 +104,6 @@ export default function LoginScreen1({navigation}) {
           style={styles.smallCircle}
           source={require('../../assets/images/grass.png')}
         />
-        {/* <View style={styles.bigCircle}></View>
-        <View style={styles.smallCircle}></View> */}
         <ScrollView>
           <View style={styles.centerizedView}>
             <View style={styles.authBox}>
@@ -53,6 +122,7 @@ export default function LoginScreen1({navigation}) {
                   autoCapitalize='none'
                   keyboardType='default'
                   textContentType='givenName'
+                  onChangeText={(val) => {setInfo({...info, sel_lang: val})}}
                 />
               </View>
               <View style={styles.inputBox}>
@@ -62,6 +132,9 @@ export default function LoginScreen1({navigation}) {
                   autoCapitalize='none'
                   keyboardType="default"
                   textContentType='name'
+                  maxLength={40}
+                  onChangeText={(val) => {checkName(val)}}
+                  value={info.user_name}
                 />
               </View>
               <View style={styles.inputBox}>
@@ -71,6 +144,9 @@ export default function LoginScreen1({navigation}) {
                   autoCapitalize='none'
                   keyboardType="number-pad"
                   textContentType='telephoneNumber'
+                  maxLength={10}
+                  onChangeText={(val) => {mobileNoCheck(val)}}
+                  value={info.user_mobile}
                 />
               </View>
               <View style={styles.inputBox}>
@@ -101,7 +177,10 @@ export default function LoginScreen1({navigation}) {
                 />
               </View>
       
-              <TouchableOpacity style={styles.registerButton}>
+              <TouchableOpacity
+                style={styles.registerButton}
+                onPress = {() => {handleSubmit()}}
+              >
                 <Text style={styles.registerButtonText}>Register</Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -132,7 +211,6 @@ const styles = StyleSheet.create({
   bigCircle: {
     width: Dimensions.get('window').height * 0.7,
     height: Dimensions.get('window').height * 0.7,
-    //backgroundColor: '#0A5E2AFF',
     borderRadius: 1000,
     position: 'absolute',
     right: Dimensions.get('window').width * 0.25,
@@ -141,7 +219,6 @@ const styles = StyleSheet.create({
   smallCircle: {
     width: Dimensions.get('window').height * 0.4,
     height: Dimensions.get('window').height * 0.4,
-    //backgroundColor: '#0A5E2AFF',
     borderRadius: 1000,
     position: 'absolute',
     bottom: Dimensions.get('window').width * -0.2,

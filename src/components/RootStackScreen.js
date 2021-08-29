@@ -12,7 +12,6 @@ const RootStack = createStackNavigator();
 export default function RootStackScreen() {
     return (
         <RootStack.Navigator screenOptions={{headerShown: false}}>
-            <RootStack.Screen name='LanguageSelect' component={LangSelectScreen} />
             <RootStack.Screen name='Welcome' component={Welcome} />
             <RootStack.Screen name='Register' component={LoginScreen1} />
             <RootStack.Screen name='LogIn' component={LoginScreen} />

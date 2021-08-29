@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useReducer } from 'react';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -29,8 +29,10 @@ import RootStackScreen from './components/RootStackScreen';
 import BottomTabScreens from './components/BottomTabs';
 import SettingsScreen from './Screens/SettingsScreen';
 import SplashScreen from './Screens/SplashScreen';
-
+import { SidebarMenu } from './components/SidebarMenu';
+import LangSelectScreen from './Screens/LangSelectScreen';
 import { AuthContext } from './components/context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const theme = {
   ...DefaultTheme,
@@ -54,57 +56,153 @@ function LogoTitle() {
 }
 
 const App = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [userToken, setUserToken] = useState(null);
 
-  const authContext = useMemo(() => {
-    signIn: () => {
-      setUserToken('fgh');
-      setIsLoading(false);
+  const initialLoginState = {
+    isLoading: true,
+    isFirstRegistration: true,
+    userToken: null,
+    mobNo: null,
+  };
+
+  const loginReducer = ( prevState, action ) => {
+    switch( action.type ) {
+      case 'RETRIEVE_TOKEN':
+        return {
+          ...prevState,
+          userToken: action.token,
+          isLoading: false,
+          isFirstRegistration: action.first,
+        };
+      case 'LOGIN':
+        return {
+          ...prevState,
+          mobNo: action.id,
+          userToken: action.token,
+          isLoading: false,
+          isFirstRegistration: false,
+        };
+      case 'LOGOUT':
+        return {
+          ...prevState,
+          mobNo: null,
+          userToken: null,
+          isLoading: false,
+          isFirstRegistration: false,
+        };
+      case 'REGISTER':
+        return {
+          ...prevState,
+          mobNo: action.id,
+          userToken: action.token,
+          isLoading: false,
+          isFirstRegistration: false,
+        };
+      case 'LANGUAGE':
+        return {
+          ...prevState,
+          mobNo: null,
+          userToken: null,
+          isLoading: false,
+          isFirstRegistration: false,
+        };
     }
-    signOut: () => {
-      setUserToken(null);
-      setIsLoading(false);
-    }
-    register: () => {
-      setUserToken('fgh');
-      setIsLoading(false);
-    }
-  })
+  };
+
+  const [loginState, dispatch] = useReducer(loginReducer, initialLoginState);
+
+  const authContext = useMemo(() => ({
+    logIn: async (mobNo) => {
+      let userToken;
+      userToken = null;
+      // Provide static mobile number to check login functionality
+      if ( mobNo == '1234567890' ) {
+        try {
+          userToken = 'sfdg';
+          await AsyncStorage.setItem('userToken', userToken)
+        } catch(e) {
+          console.log(e);
+        }
+      }
+      dispatch({ type: 'LOGIN', id: mobNo, token: userToken });
+    },
+    logOut: async () => {
+      try {
+        await AsyncStorage.removeItem('userToken')
+      } catch(e) {
+        console.log(e);
+      }
+      dispatch({ type: 'LOGOUT' });
+    },
+    register: async (info) => {
+      let userToken;
+      userToken = null;
+      try {
+        userToken = 'sfdg';
+        await AsyncStorage.setItem('userToken', userToken)
+      } catch(e) {
+        console.log(e);
+      }
+      console.log(info)
+      dispatch({ type: 'REGISTER', id: info.user_mobile, token: userToken });
+    },
+    selectLang: async() => {
+      try {
+        await AsyncStorage.setItem('userToken', JSON.stringify(false))
+      } catch(e) {
+        console.log(e);
+      }
+      dispatch({ type: 'LANGUAGE' });
+    },
+  }), [])
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 5000);
+    setTimeout( async() => {
+      let userToken;
+      userToken = null;
+      let isFirstRegistration;
+      isFirstRegistration = true;
+      try {
+        userToken = await AsyncStorage.getItem('userToken')
+        isFirstRegistration = JSON.parse( await AsyncStorage.getItem('isFirstRegistration') )
+      } catch(e) {
+        console.log(e);
+      }
+      dispatch({ type: 'RETRIEVE_TOKEN', token: userToken, first: isFirstRegistration });
+    }, 1000);
   }, [])
 
-  if ( isLoading ) {
+  if ( loginState.isLoading ) {
     return <SplashScreen />;
   }
+
   return (
     <SafeAreaProvider>
       <AuthContext.Provider value={authContext}>
-      <NavigationContainer>
-        <PaperProvider theme={theme}>
-        <StatusBar barStyle='dark-content' backgroundColor="gray" />
-        <RootStackScreen />
-        {/* <Drawer.Navigator initialRouteName="Home" screenOptions={{
-        headerStyle: {
-          backgroundColor: '#000',
-        },
-        headerTintColor: '#fff',
-        headerTitle: props => <LogoTitle {...props} />,
-      }} >
-          <Drawer.Screen name="HOME" component={BottomTabScreens} />
-          <Drawer.Screen name="Settings" component={SettingsScreen} />
-        </Drawer.Navigator> */}
-
-        <View backgroundColor='gray'>
-
-        </View>
-
-        </PaperProvider>
-      </NavigationContainer>
+        <NavigationContainer>
+          <PaperProvider theme={theme}>
+          <StatusBar barStyle='dark-content' backgroundColor="gray" />
+          { loginState.isFirstRegistration ?
+            <LangSelectScreen /> : (
+            loginState.userToken !== null ? (
+              <Drawer.Navigator
+                initialRouteName="Home"
+                drawerContent={props => <SidebarMenu {...props} />}
+                screenOptions={{
+                  headerStyle: {
+                    backgroundColor: '#000',
+                  },
+                  headerTintColor: '#fff',
+                  headerTitle: props => <LogoTitle {...props} />,
+              }} >
+                <Drawer.Screen name="HOME" component={BottomTabScreens} />
+                <Drawer.Screen name="Settings" component={SettingsScreen} />
+              </Drawer.Navigator>
+            ) :
+              <RootStackScreen />
+            )
+          }
+          </PaperProvider>
+        </NavigationContainer>
       </AuthContext.Provider>
     </SafeAreaProvider>
   );

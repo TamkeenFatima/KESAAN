@@ -1,21 +1,19 @@
-import React, {useState} from 'react';
+import React, { useContext } from 'react';
 import {
   StyleSheet,
   Text,
   View,
-  TextInput,
   Image,
   Dimensions,
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
   ImageBackground,
-  ScrollView,
-  Alert,
 } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { AuthContext } from '../components/context';
 
-export default function LangSelectScreen({navigation}) {
+export default function LangSelectScreen() {
+  const { selectLang } = useContext(AuthContext);
   return (
     
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -34,8 +32,6 @@ export default function LangSelectScreen({navigation}) {
           style={styles.smallCircle}
           source={require('../../assets/images/grass.png')}
         />
-        {/* <View style={styles.bigCircle}></View>
-        <View style={styles.smallCircle}></View> */}
         
           <View style={styles.centerizedView}>
             <View style={styles.authBox}>
@@ -44,7 +40,6 @@ export default function LangSelectScreen({navigation}) {
                       style={{ width: 125, height: 31 , justifyContent:'center', alignItems:'center'}}
                       source={require('../../assets/images/Logo.png')}
                   />
-                  {/* <Text style={{fontSize:25,fontFamily:'times new roman', fontWeight:'bold',color:'#fff',}}>KESAAN</Text> */}
                 </View>
                 <View  style={styles.main}>
                   <Text style={styles.mainText}>अपनी भाषा का चयन करें</Text>
@@ -52,19 +47,13 @@ export default function LangSelectScreen({navigation}) {
                 </View>
                 <TouchableOpacity style={styles.hindiButton}
                         onPress={()=> {
-                          navigation.navigate('Welcome')
-                        // Alert.alert(
-                        // 'कृपया हिंदी चुनें'
-                        // );
+                          selectLang()
                     }}>
                         <Text style={styles.hindiText}>हिंदी</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.hindiButton}
                         onPress={()=> {
-                          navigation.navigate('Welcome')
-                        // Alert.alert(
-                        // 'Please choose English'
-                        // );
+                          selectLang()
                     }}>
                         <Text style={styles.hindiText}>ENGLISH</Text>
                 </TouchableOpacity>
@@ -86,7 +75,6 @@ const styles = StyleSheet.create({
   bigCircle: {
     width: Dimensions.get('window').height * 0.7,
     height: Dimensions.get('window').height * 0.7,
-    //backgroundColor: '#0A5E2AFF',
     borderRadius: 1000,
     position: 'absolute',
     right: Dimensions.get('window').width * 0.25,
@@ -95,7 +83,6 @@ const styles = StyleSheet.create({
   smallCircle: {
     width: Dimensions.get('window').height * 0.4,
     height: Dimensions.get('window').height * 0.4,
-    //backgroundColor: '#0A5E2AFF',
     borderRadius: 1000,
     position: 'absolute',
     bottom: Dimensions.get('window').width * -0.2,
