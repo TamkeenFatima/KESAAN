@@ -33,7 +33,7 @@ import { SidebarMenu } from './components/SidebarMenu';
 import LangSelectScreen from './Screens/LangSelectScreen';
 import { AuthContext } from './components/context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { LocalizationProvider } from './LocalisationContext';
 const theme = {
   ...DefaultTheme,
   roundness: 2,
@@ -184,6 +184,7 @@ const App = () => {
   }
 
   return (
+    <LocalizationProvider>
     <SafeAreaProvider>
       <AuthContext.Provider value={authContext}>
         <NavigationContainer>
@@ -213,6 +214,7 @@ const App = () => {
         </NavigationContainer>
       </AuthContext.Provider>
     </SafeAreaProvider>
+    </LocalizationProvider>
   );
 };
 
