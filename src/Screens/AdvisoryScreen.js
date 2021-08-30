@@ -11,6 +11,7 @@ import {
 import Advisory from '../../assets/Advisory';
 import UserInfo from '../../assets/UserInfo';
 import bgImg from '../components/BgImg';
+import translations from '../translations';
 
 export default function AdvisoryScreen({navigation}) {
     const { width: windowWidth, height: windowHeight } = useWindowDimensions()
@@ -20,7 +21,7 @@ export default function AdvisoryScreen({navigation}) {
         <>
             <View style={styles.header}>
                 <View>
-                    <Text style={styles.heading}>Agro-Advisory</Text>
+                    <Text style={styles.heading}>{translations.advisoryTitle}</Text>
                 </View>
                 <View>
                     <Text style={styles.location}>{UserInfo.block}, {UserInfo.district}, {UserInfo.state}</Text>

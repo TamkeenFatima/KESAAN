@@ -18,10 +18,11 @@ import DeviceInfo from 'react-native-device-info';
 import { AuthContext } from '../components/context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // import IMEI from 'react-native-imei';
-import LocationPicker from '../components/LocationPicker';
+// import LocationPicker from '../components/LocationPicker';
 import {statesUTs} from '../../assets/StatesUTs';
+import translations from '../translations';
 
-export default function LoginScreen1({navigation}) {
+export default function RegisterScreen({navigation}) {
 
   const os = DeviceInfo.getSystemName();
   const version = DeviceInfo.getSystemVersion();
@@ -134,13 +135,13 @@ export default function LoginScreen1({navigation}) {
                     source={require('../../assets/images/Logo.png')}
                    />
               </View>
-              <Text style={styles.registerTitleText}>Register</Text>
+              <Text style={styles.registerTitleText}>{translations.registerText}</Text>
               <View style={styles.hr}></View>
               <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>Language</Text>
+                <Text style={styles.inputLabel}>{translations.registerLanguage}</Text>
                 <Picker
                   style={styles.picker}
-                  prompt='Language'
+                  prompt={translations.registerLanguage}
                   selectedValue={info.sel_lang}
                   onValueChange={ (itemValue) => setInfo({...info, sel_lang: itemValue}) }
                   backgroundColor='#dfe4ea'
@@ -151,7 +152,7 @@ export default function LoginScreen1({navigation}) {
                 </Picker>
               </View>
               <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>Name</Text>
+                <Text style={styles.inputLabel}>{translations.registerName}</Text>
                 <TextInput
                   style={styles.input}
                   autoCapitalize='none'
@@ -163,7 +164,7 @@ export default function LoginScreen1({navigation}) {
                 />
               </View>
               <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>Mobile</Text>
+                <Text style={styles.inputLabel}>{translations.registerMobileNo}</Text>
                 <TextInput
                   style={styles.input}
                   autoCapitalize='none'
@@ -175,7 +176,7 @@ export default function LoginScreen1({navigation}) {
                 />
               </View>
               <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>State</Text>
+                <Text style={styles.inputLabel}>{translations.registerState}</Text>
                 <Picker
                   style={styles.picker}
                   selectedValue={statePickerValue}
@@ -186,7 +187,7 @@ export default function LoginScreen1({navigation}) {
                 </Picker>
               </View>
               <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>District</Text>
+                <Text style={styles.inputLabel}>{translations.registerDistrict}</Text>
                 <TextInput
                   style={styles.input}
                   autoCapitalize='none'
@@ -195,7 +196,7 @@ export default function LoginScreen1({navigation}) {
                 />
               </View>
               <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>Block</Text>
+                <Text style={styles.inputLabel}>{translations.registerBlock}</Text>
                 <TextInput
                   style={styles.input}
                   autoCapitalize='none'
@@ -208,7 +209,7 @@ export default function LoginScreen1({navigation}) {
                 style={styles.registerButton}
                 onPress = {() => {handleSubmit()}}
               >
-                <Text style={styles.registerButtonText}>Register</Text>
+                <Text style={styles.registerButtonText}>{translations.registerButton}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={()=> {
@@ -216,7 +217,7 @@ export default function LoginScreen1({navigation}) {
                 }}
               >
                 <Text style={styles.loginText}>
-                  Already have an account? Login Now
+                  {translations.registerAccount}
                 </Text>
               </TouchableOpacity>
             </View>

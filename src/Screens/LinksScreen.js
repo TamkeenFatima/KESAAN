@@ -1,13 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet, ImageBackground } from 'react-native';
 import Hyperlink from 'react-native-hyperlink';
+import translations from '../translations';
 
 export default function LinksScreen({navigation}) {
     return (
         <>
             <View style={styles.header}>
                 <View>
-                    <Text style={styles.heading}>Useful Links</Text>
+                    <Text style={styles.heading}>{translations.linksTitle}</Text>
                 </View>
                 <View>
                     <Text style={styles.location}>{UserInfo.block}, {UserInfo.district}, {UserInfo.state}</Text>

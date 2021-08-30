@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, Image,Alert} from 'react-native';
 import * as Animatable from 'react-native-animatable';
+import translations from '../translations';
 
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize: 30}}>{props.children}</Text>
 const I = (props) => <Text style={{fontStyle: 'italic'}}>{props.children}</Text>
@@ -15,7 +16,7 @@ export default function Welcome ({navigation}) {
             >
                 <View style = { [styles.container, {flexDirection :'column'}] }>
                     <View style = {[styles.header, {flex : 3,}]}>
-                        <Text style = {styles.headerText}>Welcome to</Text>
+                        <Text style = {styles.headerText}>{translations.welcomeText}</Text>
                         <Image
                             style={styles.logo}
                             source={require('../../assets/images/Logo.png')}
@@ -26,10 +27,10 @@ export default function Welcome ({navigation}) {
                             fontFamily : 'times new roman',
                             color:'white',
                         }}>
-                            An app for
+                            {translations.app}
                         </Text>
                         <Text style ={styles.logodescription}>
-                            <B>K</B><I>esaan</I> <B>E</B><I>mpowerment</I> through <B>S</B><I>atellite-based</I> <B>A</B><I>gricultural</I> <B>A</B><I>dvisory</I> and <B>N</B><I>owcast</I>
+                            {translations.appDescription}
                         </Text>
                     </View>
                     <Animatable.View style = { styles.card} animation = 'fadeInUpBig'>
@@ -38,18 +39,18 @@ export default function Welcome ({navigation}) {
                                 onPress={()=> {
                                     navigation.navigate('Register')
                             }}>
-                                <Text style={styles.buttonText}>REGISTER</Text>
+                                <Text style={styles.buttonText}>{translations.registerButton}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.button}
                                 onPress={()=> {
                                     navigation.navigate('LogIn')
                             }}>
-                                <Text style={styles.buttonText}>LOG IN</Text>
+                                <Text style={styles.buttonText}>{translations.loginButton}</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.bottom}>
                                 <Text style ={styles.bottomText}>
-                                Terms & Conditions | Privacy Policy
+                                {translations.termsConditions}
                                 </Text>
                         </View>
                     </Animatable.View>

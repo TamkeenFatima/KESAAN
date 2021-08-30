@@ -11,9 +11,18 @@ import {
   ImageBackground,
 } from 'react-native';
 import { AuthContext } from '../components/context';
+import translations from '../translations';
 
 export default function LangSelectScreen() {
   const { selectLang } = useContext(AuthContext);
+  const lang = [
+    {shortform: 'hi', longform: 'हिंदी'},
+    {shortform: 'en', longform: 'English'},
+  ];
+
+  const settext = (value) => {
+    translations.setLanguage(value);
+  };
   return (
     
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -45,18 +54,21 @@ export default function LangSelectScreen() {
                   <Text style={styles.mainText}>अपनी भाषा का चयन करें</Text>
                   <Text style={styles.mainText}>Select your language /</Text>
                 </View>
-                <TouchableOpacity style={styles.hindiButton}
+                {lang.map((item, key) => (
+                <TouchableOpacity style={styles.hindiButton}key={key}
                         onPress={()=> {
+                          settext(item.shortform);
                           selectLang('Hindi')
                     }}>
-                        <Text style={styles.hindiText}>हिंदी</Text>
+                        <Text style={styles.hindiText}>{item.longform}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.hindiButton}
-                        onPress={()=> {
-                          selectLang('English')
-                    }}>
-                        <Text style={styles.hindiText}>ENGLISH</Text>
-                </TouchableOpacity>
+                // <TouchableOpacity style={styles.hindiButton}
+                //         onPress={()=> {
+                //           selectLang('English')
+                //     }}>
+                //         <Text style={styles.hindiText}>ENGLISH</Text>
+                // </TouchableOpacity>
+                ))}
             </View>
           </View>
       </View>

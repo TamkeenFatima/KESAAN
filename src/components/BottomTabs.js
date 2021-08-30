@@ -6,11 +6,13 @@ import HomeScreen from '../Screens/HomeScreen';
 import AdvisoryScreen from '../Screens/AdvisoryScreen';
 import LinksScreen from '../Screens/LinksScreen';
 import FeedbackScreen from '../Screens/FeedbackScreen';
+import { LocalizationProvider } from '../LocalisationContext';
 
 const Tab = createMaterialBottomTabNavigator();
 
 const BottomTabScreens = () => {
     return (
+        <LocalizationProvider>
         <Tab.Navigator
             initialRouteName="Home"
             activeColor="#fff"
@@ -65,6 +67,7 @@ const BottomTabScreens = () => {
                 }}
             />
         </Tab.Navigator>
+        </LocalizationProvider>
     )
 }
 
