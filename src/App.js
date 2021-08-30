@@ -62,6 +62,7 @@ const App = () => {
     isFirstRegistration: true,
     userToken: null,
     mobNo: null,
+    language: '',
   };
 
   const loginReducer = ( prevState, action ) => {
@@ -96,6 +97,7 @@ const App = () => {
           userToken: action.token,
           isLoading: false,
           isFirstRegistration: false,
+          language: action.lang,
         };
       case 'LANGUAGE':
         return {
@@ -104,6 +106,7 @@ const App = () => {
           userToken: null,
           isLoading: false,
           isFirstRegistration: false,
+          language: action.id,
         };
     }
   };
@@ -119,6 +122,7 @@ const App = () => {
         try {
           userToken = 'sfdg';
           await AsyncStorage.setItem('userToken', userToken)
+          await AsyncStorage.setItem('isFirstRegistration', JSON.stringify(false))
         } catch(e) {
           console.log(e);
         }
@@ -139,19 +143,20 @@ const App = () => {
       try {
         userToken = 'sfdg';
         await AsyncStorage.setItem('userToken', userToken)
+        await AsyncStorage.setItem('isFirstRegistration', JSON.stringify(false))
       } catch(e) {
         console.log(e);
       }
       console.log(info)
-      dispatch({ type: 'REGISTER', id: info.user_mobile, token: userToken });
+      dispatch({ type: 'REGISTER', id: info.user_mobile, lang: info.sel_lang, token: userToken });
     },
-    selectLang: async() => {
+    selectLang: async(lang) => {
       try {
-        await AsyncStorage.setItem('userToken', JSON.stringify(false))
+        await AsyncStorage.setItem('language', lang)
       } catch(e) {
         console.log(e);
       }
-      dispatch({ type: 'LANGUAGE' });
+      dispatch({ type: 'LANGUAGE', id: lang });
     },
   }), [])
 

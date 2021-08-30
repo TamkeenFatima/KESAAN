@@ -47,13 +47,13 @@ export default function LangSelectScreen() {
                 </View>
                 <TouchableOpacity style={styles.hindiButton}
                         onPress={()=> {
-                          selectLang()
+                          selectLang('Hindi')
                     }}>
                         <Text style={styles.hindiText}>हिंदी</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.hindiButton}
                         onPress={()=> {
-                          selectLang()
+                          selectLang('English')
                     }}>
                         <Text style={styles.hindiText}>ENGLISH</Text>
                 </TouchableOpacity>

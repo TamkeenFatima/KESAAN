@@ -13,8 +13,10 @@ import {
   ScrollView,
   Alert
 } from 'react-native';
+import {Picker} from '@react-native-picker/picker';
 import DeviceInfo from 'react-native-device-info';
 import { AuthContext } from '../components/context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // import IMEI from 'react-native-imei';
 
 export default function LoginScreen1({navigation}) {
@@ -35,6 +37,19 @@ export default function LoginScreen1({navigation}) {
     os_version: version,
     registered_on: '',
   })
+
+  useEffect( async () => {
+    let lang;
+    try {
+      lang = await AsyncStorage.getItem('language');
+    } catch(e) {
+      console.log(e)
+    }
+    setInfo({
+      ...info,
+      sel_lang: lang,
+    })
+  }, [])
 
   useEffect(() => {
     let currentTime = new Date();
@@ -117,13 +132,17 @@ export default function LoginScreen1({navigation}) {
               <View style={styles.hr}></View>
               <View style={styles.inputBox}>
                 <Text style={styles.inputLabel}>Language</Text>
-                <TextInput
-                  style={styles.input}
-                  autoCapitalize='none'
-                  keyboardType='default'
-                  textContentType='givenName'
-                  onChangeText={(val) => {setInfo({...info, sel_lang: val})}}
-                />
+                <Picker
+                  style={styles.picker}
+                  prompt='Language'
+                  selectedValue={info.sel_lang}
+                  onValueChange={ (itemValue) => setInfo({...info, sel_lang: itemValue}) }
+                  backgroundColor='#dfe4ea'
+                >
+                  <Picker.Item label="English" value="English" />
+                  <Picker.Item label="Hindi" value="Hindi" />
+
+                </Picker>
               </View>
               <View style={styles.inputBox}>
                 <Text style={styles.inputLabel}>Name</Text>
@@ -286,6 +305,16 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 40,
     backgroundColor: '#dfe4ea',
+    borderRadius: 4,
+    paddingHorizontal: 10,
+  },
+  picker: {
+    marginTop: 10,
+    width: '100%',
+    height: 60,
+    color: 'black',
+    borderColor: 'black',
+    borderWidth: 20,
     borderRadius: 4,
     paddingHorizontal: 10,
   },
