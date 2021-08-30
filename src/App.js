@@ -33,7 +33,8 @@ import { SidebarMenu } from './components/SidebarMenu';
 import LangSelectScreen from './Screens/LangSelectScreen';
 import { AuthContext } from './components/context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { LocalizationProvider } from './LocalisationContext';
+import { LocalizationProvider } from './components/LocalisationContext';
+
 const theme = {
   ...DefaultTheme,
   roundness: 2,
@@ -150,12 +151,7 @@ const App = () => {
       console.log(info)
       dispatch({ type: 'REGISTER', id: info.user_mobile, lang: info.sel_lang, token: userToken });
     },
-    selectLang: async(lang) => {
-      try {
-        await AsyncStorage.setItem('language', lang)
-      } catch(e) {
-        console.log(e);
-      }
+    selectLang: (lang) => {
       dispatch({ type: 'LANGUAGE', id: lang });
     },
   }), [])
