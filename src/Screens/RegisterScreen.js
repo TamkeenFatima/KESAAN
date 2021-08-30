@@ -20,9 +20,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // import IMEI from 'react-native-imei';
 // import LocationPicker from '../components/LocationPicker';
 import {statesUTs} from '../../assets/StatesUTs';
-import translations from '../translations';
+import translations from '../../assets/languages/translations';
+import { LocalizationContext } from '../components/LocalisationContext';
 
 export default function RegisterScreen({navigation}) {
+
+  const { translations, setAppLanguage } = useContext(LocalizationContext)
 
   const os = DeviceInfo.getSystemName();
   const version = DeviceInfo.getSystemVersion();
@@ -44,7 +47,7 @@ export default function RegisterScreen({navigation}) {
   useEffect( async () => {
     let lang;
     try {
-      lang = await AsyncStorage.getItem('language');
+      lang = await AsyncStorage.getItem('appLanguage');
     } catch(e) {
       console.log(e)
     }
@@ -67,13 +70,13 @@ export default function RegisterScreen({navigation}) {
 
   const handleSubmit = () => {
     if ( (info.user_name.length == 0) && (info.user_mobile.length == 0) ) {
-      Alert.alert("Name and phone number field cannot be empty")
+      Alert.alert(translations.name_phone_empty)
     }
     else if ( info.user_name.length == 0 ) {
-      Alert.alert("Your name is required!")
+      Alert.alert(translations.name_empty)
     }
     else if ( info.user_mobile.length <10 ) {
-      Alert.alert("Invalid mobile number. Please enter correct number.")
+      Alert.alert(translations.invalid_phone_no)
     }
     else {
       register(info);
@@ -143,11 +146,14 @@ export default function RegisterScreen({navigation}) {
                   style={styles.picker}
                   prompt={translations.registerLanguage}
                   selectedValue={info.sel_lang}
-                  onValueChange={ (itemValue) => setInfo({...info, sel_lang: itemValue}) }
+                  onValueChange={ (itemValue) => {
+                    setInfo({...info, sel_lang: itemValue});
+                    setAppLanguage(itemValue);
+                  }}
                   backgroundColor='#dfe4ea'
                 >
-                  <Picker.Item label="English" value="English" />
-                  <Picker.Item label="Hindi" value="Hindi" />
+                  <Picker.Item label="English" value="en" />
+                  <Picker.Item label="हिंदी" value="hi" />
 
                 </Picker>
               </View>

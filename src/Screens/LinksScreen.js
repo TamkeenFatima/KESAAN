@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet, ImageBackground } from 'react-native';
 import Hyperlink from 'react-native-hyperlink';
-import translations from '../translations';
+import { LocalizationContext } from '../components/LocalisationContext';
 
 export default function LinksScreen({navigation}) {
+    const { translations } = useContext(LocalizationContext);
     return (
         <>
             <View style={styles.header}>
@@ -24,23 +25,23 @@ export default function LinksScreen({navigation}) {
             <View style={styles.container}>
                 <Hyperlink linkDefault={ true }>
                     <View style={styles.linkBox}>
-                        <Text style={styles.sourceText}>Agro-AWS:</Text>
+                        <Text style={styles.sourceText}>{translations.aws}:</Text>
                         <Text style={styles.linksText}>http://aws.imd.gov.in:8091</Text>
                     </View>
                     <View style={styles.linkBox}>
-                        <Text style={styles.sourceText}>Dehradun Met Centre:</Text>
+                        <Text style={styles.sourceText}>{translations.dehradun_met}:</Text>
                         <Text style={styles.linksText}>https://rmcnewdelhi.imd.gov.in/MET_CENTRES/MCDDN</Text>
                     </View>
                     <View style={styles.linkBox}>
-                        <Text style={styles.sourceText}>AMFU, IIT Roorkee:</Text>
+                        <Text style={styles.sourceText}>{translations.amfu}:</Text>
                         <Text style={styles.linksText}>http://gkms.iitr.ac.in</Text>
                     </View>
                     <View style={styles.linkBox}>
-                        <Text style={styles.sourceText}>Crowdsourcing:</Text>
+                        <Text style={styles.sourceText}>{translations.crowdsource}:</Text>
                         <Text style={styles.linksText}>https://city.imd.gov.in/citywx/crowd/enter_th_datag.php</Text>
                     </View>
                     <View style={styles.linkBox}>
-                        <Text style={styles.sourceText}>DAMINI App developed by IMD for warning of thunder lightning:</Text>
+                        <Text style={styles.sourceText}>{translations.DAMINI}:</Text>
                         <Text style={styles.linksText}>https://play.google.com/store/apps/details?id=com.lightening.live.damini&hl=en.</Text>
                     </View>
                 </Hyperlink>

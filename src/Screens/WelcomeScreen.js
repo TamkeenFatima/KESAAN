@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, Image,Alert} from 'react-native';
 import * as Animatable from 'react-native-animatable';
-import translations from '../translations';
+import { LocalizationContext } from '../components/LocalisationContext';
 
 const B = (props) => <Text style={{fontWeight: 'bold', fontSize: 30}}>{props.children}</Text>
 const I = (props) => <Text style={{fontStyle: 'italic'}}>{props.children}</Text>
 
 export default function Welcome ({navigation}) {
+    const { translations } = useContext(LocalizationContext)
     return(
             <ImageBackground
                 source={require('../../assets/images/grass.png')}
@@ -16,7 +17,7 @@ export default function Welcome ({navigation}) {
             >
                 <View style = { [styles.container, {flexDirection :'column'}] }>
                     <View style = {[styles.header, {flex : 3,}]}>
-                        <Text style = {styles.headerText}>{translations.welcomeText}</Text>
+                        <Text style = {styles.headerText}><B>{translations.welcomeText}</B></Text>
                         <Image
                             style={styles.logo}
                             source={require('../../assets/images/Logo.png')}
@@ -27,7 +28,7 @@ export default function Welcome ({navigation}) {
                             fontFamily : 'times new roman',
                             color:'white',
                         }}>
-                            {translations.app}
+                            <I>{translations.app}</I>
                         </Text>
                         <Text style ={styles.logodescription}>
                             {translations.appDescription}
