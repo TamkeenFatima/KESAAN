@@ -20,10 +20,24 @@ const translations = {
     registerDistrict : 'District',
     registerBlock : 'Block',
     registerAccount : 'Already have an account? Login Now',
+    name_phone_empty : 'Name and phone number field cannot be empty',
+    name_empty : 'Your name is required!',
+    invalid_phone_no : 'Invalid mobile number. Please enter correct number.',
     stateSelection : 'Select State',
+
+    //HomeScreen Translations
+    weatherTitle : 'Weather Today',
 
     //AdvisoryScreen Translations.
     advisoryTitle : 'Agro-Advisory',
+
+    //FeedbackScreen Translations
+    feedbackTitle : 'Feedback',
+    aws : 'Agro - AWS',
+    dehradun_met : 'Dehradun Met Centre',
+    amfu : 'AMFU, IIT Roorkee',
+    crowdsource : 'Crowdsourcing',
+    DAMINI : 'DAMINI App developed by IMD for warning of thunder lightning',
 
     //Useful Links 
     linksTitle : 'Useful Links',
@@ -48,10 +62,24 @@ const translations = {
     registerDistrict : 'जिला',
     registerBlock : 'ब्लॉक',
     registerAccount : 'क्या आपके पास पहले से एक खाता मौजूद है? अभी लॉगिन करें',
+    name_phone_empty : 'नाम और फ़ीन नंबर खाली नहीं हो सकता',
+    name_empty: 'आपका नाम आवश्यक है!',
+    invalid_phone_no : 'अमान्य मोबाइल नंबर। कृपया सही मोबाइल नंबर दर्ज करें।',
     stateSelection: 'राज्य चुनें',
+
+    //HomeScreen Translations
+    weatherTitle : 'आज का मौसम',
 
     //AdvisoryScreen Translations.
     advisoryTitle : 'कृषि सलाहकार',
+
+    //FeedbackScreen Translations
+    feedbackTitle : 'प्रतिपुष्टि',
+    aws : 'एग्रो - ए.डब्ल्यू.एस.',
+    dehradun_met : 'देहरादून मौसम केंद्र',
+    amfu : 'ए.एम.एफ़.यू., आइ.आइ.टी. रुड़की',
+    crowdsource : 'क्राउडसोर्सिंग',
+    DAMINI : 'बिजली गरजने की चेतावनी के लिए आई.एम.डी. द्वारा विकसित दामिनी ऐप',
 
     //Useful Links Screen 
     linksTitle : 'उपयोगी कड़ियां',
