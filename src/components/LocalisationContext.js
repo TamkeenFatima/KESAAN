@@ -1,5 +1,5 @@
 import React, { createContext, useState } from 'react';
-import translations, { DEFAULT_LANGUAGE } from './translations';
+import translations, { DEFAULT_LANGUAGE } from '../../assets/languages/translations';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as RNLocalize from 'react-native-localize';
 
