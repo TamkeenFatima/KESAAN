@@ -18,6 +18,8 @@ import DeviceInfo from 'react-native-device-info';
 import { AuthContext } from '../components/context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // import IMEI from 'react-native-imei';
+import LocationPicker from '../components/LocationPicker';
+import {statesUTs} from '../../assets/StatesUTs';
 
 export default function LoginScreen1({navigation}) {
 
@@ -101,6 +103,10 @@ export default function LoginScreen1({navigation}) {
     }
   }
 
+  const [ statePickerValue, setStatePickerValue ] = useState('Select State');
+  const [ districtPickerValue, setDistrictPickerValue ] = useState('Select District');
+  const [ blockPickerValue, setBlockPickerValue ] = useState('Select Block');
+
   return (
     
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -170,12 +176,14 @@ export default function LoginScreen1({navigation}) {
               </View>
               <View style={styles.inputBox}>
                 <Text style={styles.inputLabel}>State</Text>
-                <TextInput
-                  style={styles.input}
-                  autoCapitalize='none'
-                  keyboardType="default"
-                  textContentType='addressState'
-                />
+                <Picker
+                  style={styles.picker}
+                  selectedValue={statePickerValue}
+                  onValueChange={ (itemValue) => setStatePickerValue(itemValue) }
+                  backgroundColor='#dfe4ea'
+                >
+                  {statesUTs.map( (val, index) => <Picker.Item label={val} value={val} key={index} /> )}
+                </Picker>
               </View>
               <View style={styles.inputBox}>
                 <Text style={styles.inputLabel}>District</Text>
