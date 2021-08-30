@@ -1,6 +1,6 @@
 export const statesUTs = [
     'Select State',
-    'Andaman and Nicobar Islands',
+    'Andaman and Nicobar',
     'Arunachal Pradesh',
     'Andhra Pradesh',
     'Assam',
