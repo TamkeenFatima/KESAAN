@@ -26,12 +26,15 @@ const translations = {
     stateSelection : 'Select State',
 
     //HomeScreen Translations
+    home_tab : 'Home',
     weatherTitle : 'Weather Today',
 
     //AdvisoryScreen Translations.
+    advisory_tab : 'Advisory',
     advisoryTitle : 'Agro-Advisory',
 
     //FeedbackScreen Translations
+    feedback_tab : 'Feedback',
     feedbackTitle : 'Feedback',
     aws : 'Agro - AWS',
     dehradun_met : 'Dehradun Met Centre',
@@ -39,7 +42,8 @@ const translations = {
     crowdsource : 'Crowdsourcing',
     DAMINI : 'DAMINI App developed by IMD for warning of thunder lightning',
 
-    //Useful Links 
+    //Useful Links
+    links_tab : 'Links',
     linksTitle : 'Useful Links',
    
   },
@@ -68,12 +72,15 @@ const translations = {
     stateSelection: 'राज्य चुनें',
 
     //HomeScreen Translations
+    home_tab : 'होम',
     weatherTitle : 'आज का मौसम',
 
     //AdvisoryScreen Translations.
+    advisory_tab : 'सलाहकारी',
     advisoryTitle : 'कृषि सलाहकार',
 
     //FeedbackScreen Translations
+    feedback_tab : 'प्रतिपुष्टि',
     feedbackTitle : 'प्रतिपुष्टि',
     aws : 'एग्रो - ए.डब्ल्यू.एस.',
     dehradun_met : 'देहरादून मौसम केंद्र',
@@ -81,7 +88,8 @@ const translations = {
     crowdsource : 'क्राउडसोर्सिंग',
     DAMINI : 'बिजली गरजने की चेतावनी के लिए आई.एम.डी. द्वारा विकसित दामिनी ऐप',
 
-    //Useful Links Screen 
+    //Useful Links Screen
+    links_tab : 'लिंक्स',
     linksTitle : 'उपयोगी कड़ियां',
    }
 };
