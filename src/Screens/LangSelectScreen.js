@@ -1,55 +1,71 @@
-import React, {useState} from 'react';
+import React, { useContext } from 'react';
 import {
   StyleSheet,
   Text,
   View,
-  TextInput,
   Image,
   Dimensions,
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
-  ScrollView,
-  Alert,
+  ImageBackground,
 } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { AuthContext } from '../components/context';
+import { LocalizationContext } from '../components/LocalisationContext';
 
 export default function LangSelectScreen() {
+  const { selectLang } = useContext(AuthContext);
+  const { setAppLanguage } = useContext(LocalizationContext);
+  const lang = [
+    {shortform: 'hi', longform: 'हिंदी'},
+    {shortform: 'en', longform: 'English'},
+  ];
+  global.lang = lang;
+
   return (
     
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <ImageBackground
+        source={require('../../assets/images/grass.png')}
+        style={{
+            flex: 1,
+            }}
+      >
       <View style={styles.container}>
-        <View style={styles.bigCircle}></View>
-        <View style={styles.smallCircle}></View>
+        <Image
+          style={styles.bigCircle}
+          source={require('../../assets/images/grass.png')}
+        />
+        <Image
+          style={styles.smallCircle}
+          source={require('../../assets/images/grass.png')}
+        />
         
           <View style={styles.centerizedView}>
             <View style={styles.authBox}>
                 <View style={styles.logoBox}>
-                  <Text style={{fontSize:25,fontFamily:'times new roman', fontWeight:'bold',color:'#fff',}}>KESAAN</Text>
+                  <Image
+                      style={{ width: 125, height: 31 , justifyContent:'center', alignItems:'center'}}
+                      source={require('../../assets/images/Logo.png')}
+                  />
                 </View>
                 <View  style={styles.main}>
-                  <Text style={styles.mainText}>Select your language /</Text>
                   <Text style={styles.mainText}>अपनी भाषा का चयन करें</Text>
+                  <Text style={styles.mainText}>Select your language /</Text>
                 </View>
-                <TouchableOpacity style={styles.hindiButton}
+                {lang.map((item, key) => (
+                <TouchableOpacity style={styles.hindiButton}key={key}
                         onPress={()=> {
-                        Alert.alert(
-                        'कृपया हिंदी चुनें'
-                        );
+                          setAppLanguage(item.shortform);
+                          selectLang(item.shortform);
                     }}>
-                        <Text style={styles.hindiText}>हिंदी</Text>
+                        <Text style={styles.hindiText}>{item.longform}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.hindiButton}
-                        onPress={()=> {
-                        Alert.alert(
-                        'Please choose English'
-                        );
-                    }}>
-                        <Text style={styles.hindiText}>ENGLISH</Text>
-                </TouchableOpacity>
+                ))}
             </View>
           </View>
       </View>
+      </ImageBackground>
     </TouchableWithoutFeedback>
     
   );
@@ -59,11 +75,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
   },
   bigCircle: {
     width: Dimensions.get('window').height * 0.7,
     height: Dimensions.get('window').height * 0.7,
-    backgroundColor: '#0A5E2AFF',
     borderRadius: 1000,
     position: 'absolute',
     right: Dimensions.get('window').width * 0.25,
@@ -72,7 +88,6 @@ const styles = StyleSheet.create({
   smallCircle: {
     width: Dimensions.get('window').height * 0.4,
     height: Dimensions.get('window').height * 0.4,
-    backgroundColor: '#0A5E2AFF',
     borderRadius: 1000,
     position: 'absolute',
     bottom: Dimensions.get('window').width * -0.2,

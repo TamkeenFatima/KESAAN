@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,17 +9,126 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
+  ImageBackground,
   ScrollView,
+  Alert
 } from 'react-native';
-import { Icon } from 'react-native-elements';
+import {Picker} from '@react-native-picker/picker';
+import DeviceInfo from 'react-native-device-info';
+import { AuthContext } from '../components/context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+// import IMEI from 'react-native-imei';
+// import LocationPicker from '../components/LocationPicker';
+import {statesUTs} from '../../assets/StatesUTs';
+import translations from '../../assets/languages/translations';
+import { LocalizationContext } from '../components/LocalisationContext';
 
-export default function LoginScreen1() {
+export default function RegisterScreen({navigation}) {
+
+  const { translations, setAppLanguage } = useContext(LocalizationContext)
+
+  const os = DeviceInfo.getSystemName();
+  const version = DeviceInfo.getSystemVersion();
+  const model = DeviceInfo.getModel();
+  // const imei = IMEI.getImei();
+
+  const [info, setInfo] = useState({
+    location_id: 0,
+    sel_lang: '',
+    user_name: '',
+    user_mobile: '',
+    mob_imei_no: '',
+    mob_model: model,
+    mob_os: os,
+    os_version: version,
+    registered_on: '',
+  })
+
+  useEffect( async () => {
+    let lang;
+    try {
+      lang = await AsyncStorage.getItem('appLanguage');
+    } catch(e) {
+      console.log(e)
+    }
+    setInfo({
+      ...info,
+      sel_lang: lang,
+    })
+  }, [])
+
+  useEffect(() => {
+    let currentTime = new Date();
+    currentTime = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds() + ', ' + currentTime.getDate() + '/' + (currentTime.getMonth()+1) + '/' + currentTime.getFullYear()
+    setInfo({
+      ...info,
+      registered_on: currentTime,
+    })
+  }, [handleSubmit])
+
+  const { register } = useContext(AuthContext);
+
+  const handleSubmit = () => {
+    if ( (info.user_name.length == 0) && (info.user_mobile.length == 0) ) {
+      Alert.alert(translations.name_phone_empty)
+    }
+    else if ( info.user_name.length == 0 ) {
+      Alert.alert(translations.name_empty)
+    }
+    else if ( info.user_mobile.length <10 ) {
+      Alert.alert(translations.invalid_phone_no)
+    }
+    else {
+      register(info);
+    }
+  }
+
+  const checkName = (val) => {
+    const letters = ['', ' ', 'A', 'a', 'B', 'b', 'C', 'c', 'D', 'd', 'E', 'e', 'F', 'f', 'G', 'g', 'H', 'h', 'I', 'i', 'J', 'j', 'K', 'k', 'L', 'l', 'M', 'm', 'N', 'n', 'O', 'o', 'P', 'p', 'Q', 'q', 'R', 'r', 'S', 's', 'T', 't', 'U', 'u', 'V', 'v', 'W', 'w', 'X', 'x', 'Y', 'y', 'Z', 'z', 'अ', 'आ', 'इ', 'ई', 'उ', 'ऊ', 'ा',' ि', ' ी', ' ु', ' ू', 'ऋ', 'ॠ', 'ऌ', 'ॡ', 'ए', 'ऐ', 'ओ', 'औ', ' ृ', ' ॄ', ' ॢ', ' ॣ', ' े', ' ै', ' ो', ' ौ', ' ँ', ' ं', ' ः', ' ़', 'क', 'ख', 'ग', 'घ', 'ङ', 'च', 'छ', 'ज', 'झ', 'ञ', 'ट', 'ठ', 'ड', 'ढ', 'ण', 'त', 'थ', 'द', 'ध', 'न', 'प', 'फ', 'ब', 'भ', 'म', 'क़', 'ख़', 'ग़', 'ज़', 'ड़', 'ढ़', 'फ़', 'य', 'र', 'ल', 'ळ', 'व', 'ह', 'श', 'ष', 'स', 'ऱ', 'ऴ', 'ऍ', 'ऑ', 'ऎ', 'ऒ', ' ॅ', ' ॉ', ' ॆ', ' ॊ'];
+    letters.forEach(char => {
+      if ( char === val.slice(-1) ) {
+        setInfo({
+          ...info,
+          user_name: val,
+        })
+      }
+    });
+  }
+
+  const mobileNoCheck = (val) => {
+    const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    for ( let i=0; i<numbers.length; i++ ) {
+      if ( i == val.slice(-1) ) {
+        setInfo({
+          ...info,
+          user_mobile: val,
+        })
+      }
+    }
+  }
+
+  const [ statePickerValue, setStatePickerValue ] = useState('Select State');
+  const [ districtPickerValue, setDistrictPickerValue ] = useState('Select District');
+  const [ blockPickerValue, setBlockPickerValue ] = useState('Select Block');
+
   return (
     
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <ImageBackground
+        source={require('../../assets/images/grass.png')}
+        style={{
+            flex: 1,
+            }}
+      >
       <View style={styles.container}>
-        <View style={styles.bigCircle}></View>
-        <View style={styles.smallCircle}></View>
+        <Image
+          style={styles.bigCircle}
+          source={require('../../assets/images/grass.png')}
+        />
+        <Image
+          style={styles.smallCircle}
+          source={require('../../assets/images/grass.png')}
+        />
         <ScrollView>
           <View style={styles.centerizedView}>
             <View style={styles.authBox}>
@@ -29,37 +138,62 @@ export default function LoginScreen1() {
                     source={require('../../assets/images/Logo.png')}
                    />
               </View>
-              <Text style={styles.registerTitleText}>Register</Text>
+              <Text style={styles.registerTitleText}>{translations.registerText}</Text>
               <View style={styles.hr}></View>
               <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>Language</Text>
-                <TextInput
-                  style={styles.input}
-                  autoCapitalize='none'
-                  keyboardType='default'
-                  textContentType='givenName'
-                />
+                <Text style={styles.inputLabel}>{translations.registerLanguage}</Text>
+                <Picker
+                  style={styles.picker}
+                  prompt={translations.registerLanguage}
+                  selectedValue={info.sel_lang}
+                  onValueChange={ (itemValue) => {
+                    setInfo({...info, sel_lang: itemValue});
+                    setAppLanguage(itemValue);
+                  }}
+                  backgroundColor='#dfe4ea'
+                >
+                  <Picker.Item label="English" value="en" />
+                  <Picker.Item label="हिंदी" value="hi" />
+
+                </Picker>
               </View>
               <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>Name</Text>
+                <Text style={styles.inputLabel}>{translations.registerName}</Text>
                 <TextInput
                   style={styles.input}
                   autoCapitalize='none'
                   keyboardType="default"
                   textContentType='name'
+                  maxLength={40}
+                  onChangeText={(val) => {checkName(val)}}
+                  value={info.user_name}
                 />
               </View>
               <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>Mobile</Text>
+                <Text style={styles.inputLabel}>{translations.registerMobileNo}</Text>
                 <TextInput
                   style={styles.input}
                   autoCapitalize='none'
                   keyboardType="number-pad"
                   textContentType='telephoneNumber'
+                  maxLength={10}
+                  onChangeText={(val) => {mobileNoCheck(val)}}
+                  value={info.user_mobile}
                 />
               </View>
               <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>State</Text>
+                <Text style={styles.inputLabel}>{translations.registerState}</Text>
+                <Picker
+                  style={styles.picker}
+                  selectedValue={statePickerValue}
+                  onValueChange={ (itemValue) => setStatePickerValue(itemValue) }
+                  backgroundColor='#dfe4ea'
+                >
+                  {statesUTs.map( (val, index) => <Picker.Item label={val} value={val} key={index} /> )}
+                </Picker>
+              </View>
+              <View style={styles.inputBox}>
+                <Text style={styles.inputLabel}>{translations.registerDistrict}</Text>
                 <TextInput
                   style={styles.input}
                   autoCapitalize='none'
@@ -68,16 +202,7 @@ export default function LoginScreen1() {
                 />
               </View>
               <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>District</Text>
-                <TextInput
-                  style={styles.input}
-                  autoCapitalize='none'
-                  keyboardType="default"
-                  textContentType='addressState'
-                />
-              </View>
-              <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>Block</Text>
+                <Text style={styles.inputLabel}>{translations.registerBlock}</Text>
                 <TextInput
                   style={styles.input}
                   autoCapitalize='none'
@@ -86,18 +211,26 @@ export default function LoginScreen1() {
                 />
               </View>
       
-              <TouchableOpacity style={styles.registerButton}>
-                <Text style={styles.registerButtonText}>Register</Text>
+              <TouchableOpacity
+                style={styles.registerButton}
+                onPress = {() => {handleSubmit()}}
+              >
+                <Text style={styles.registerButtonText}>{translations.registerButton}</Text>
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={()=> {
+                    navigation.navigate('LogIn')
+                }}
+              >
                 <Text style={styles.loginText}>
-                  Don't have an account? Login Now
+                  {translations.registerAccount}
                 </Text>
               </TouchableOpacity>
             </View>
           </View>
         </ScrollView>
       </View>
+      </ImageBackground>
     </TouchableWithoutFeedback>
     
   );
@@ -107,11 +240,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
   },
   bigCircle: {
     width: Dimensions.get('window').height * 0.7,
     height: Dimensions.get('window').height * 0.7,
-    backgroundColor: '#0A5E2AFF',
     borderRadius: 1000,
     position: 'absolute',
     right: Dimensions.get('window').width * 0.25,
@@ -120,7 +253,6 @@ const styles = StyleSheet.create({
   smallCircle: {
     width: Dimensions.get('window').height * 0.4,
     height: Dimensions.get('window').height * 0.4,
-    backgroundColor: '#0A5E2AFF',
     borderRadius: 1000,
     position: 'absolute',
     bottom: Dimensions.get('window').width * -0.2,
@@ -188,6 +320,16 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 40,
     backgroundColor: '#dfe4ea',
+    borderRadius: 4,
+    paddingHorizontal: 10,
+  },
+  picker: {
+    marginTop: 10,
+    width: '100%',
+    height: 60,
+    color: 'black',
+    borderColor: 'black',
+    borderWidth: 20,
     borderRadius: 4,
     paddingHorizontal: 10,
   },

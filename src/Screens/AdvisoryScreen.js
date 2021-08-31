@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useContext } from 'react';
 import {
     View,
     Text,
@@ -11,16 +11,19 @@ import {
 import Advisory from '../../assets/Advisory';
 import UserInfo from '../../assets/UserInfo';
 import bgImg from '../components/BgImg';
+import { LocalizationContext } from '../components/LocalisationContext';
 
 export default function AdvisoryScreen({navigation}) {
+    const { translations } = useContext(LocalizationContext);
     const { width: windowWidth, height: windowHeight } = useWindowDimensions()
 
     const scrollY = useRef( new Animated.Value(0) ).current;
+    let BgImg = '';
     return (
         <>
             <View style={styles.header}>
                 <View>
-                    <Text style={styles.heading}>Agro-Advisory</Text>
+                    <Text style={styles.heading}>{translations.advisoryTitle}</Text>
                 </View>
                 <View>
                     <Text style={styles.location}>{UserInfo.block}, {UserInfo.district}, {UserInfo.state}</Text>

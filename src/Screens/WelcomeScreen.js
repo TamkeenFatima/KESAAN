@@ -1,49 +1,68 @@
-import { styles } from 'ansi-colors';
-import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image,Alert} from 'react-native';
-const B = (props) => <Text style={{fontWeight: 'bold'}}>{props.children}</Text>
+import React, { useContext } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, Image,Alert} from 'react-native';
+import * as Animatable from 'react-native-animatable';
+import { LocalizationContext } from '../components/LocalisationContext';
 
-class Welcome extends Component {
-    render()
-    {
-        return(
-                <View style = { [welcome.container, {flexDirection :'column'}] }>
-                    <View style = {[welcome.header, {flex : 3,}]}>
-                        <Text style = {welcome.headerText}>
-                        Welcome to
-                        </Text>
+const B = (props) => <Text style={{fontWeight: 'bold', fontSize: 30}}>{props.children}</Text>
+const I = (props) => <Text style={{fontStyle: 'italic'}}>{props.children}</Text>
+
+export default function Welcome ({navigation}) {
+    const { translations } = useContext(LocalizationContext)
+    return(
+            <ImageBackground
+                source={require('../../assets/images/grass.png')}
+                style={{
+                    flex: 1,
+                    }}
+            >
+                <View style = { [styles.container, {flexDirection :'column'}] }>
+                    <View style = {[styles.header, {flex : 3,}]}>
+                        <Text style = {styles.headerText}><B>{translations.welcomeText}</B></Text>
                         <Image
-                        style={{ width: 200, height: 50 ,marginTop : 20,alignItems:'center'}}
-                        source={require('../../assets/images/Logo.png')}
-                         />
-                        <Text style ={welcome.logodescription}>
-                        <B>K</B>esaan <B>E</B>mpowerment through <B>S</B>atellite-based <B>A</B>gricultural <B>A</B>dvisory and <B>N</B>owcast
+                            style={styles.logo}
+                            source={require('../../assets/images/Logo.png')}
+                        />
+                        <Text style = {{
+                            fontSize : 25,
+                            marginTop : 30,
+                            fontFamily : 'times new roman',
+                            color:'white',
+                        }}>
+                            <I>{translations.app}</I>
+                        </Text>
+                        <Text style ={styles.logodescription}>
+                            {translations.appDescription}
                         </Text>
                     </View>
-                    <View style = { welcome.logbut}>
-                    <TouchableOpacity style={welcome.registerButton}
-                        onPress={()=> {
-                            Alert.alert(
-                            'Please REgister'
-                        );
-                    }}>
-                        <Text style={welcome.registerText}>REGISTER</Text>
-                    </TouchableOpacity>
-                        <View style={welcome.bottom}>
-                             <Text style ={welcome.bottomText}>
-                                Terms & Conditions | Privacy Policy
-                             </Text>
+                    <Animatable.View style = { styles.card} animation = 'fadeInUpBig'>
+                        <View style={styles.buttonWrapper}>
+                            <TouchableOpacity style={styles.button}
+                                onPress={()=> {
+                                    navigation.navigate('Register')
+                            }}>
+                                <Text style={styles.buttonText}>{translations.registerButton}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.button}
+                                onPress={()=> {
+                                    navigation.navigate('LogIn')
+                            }}>
+                                <Text style={styles.buttonText}>{translations.loginButton}</Text>
+                            </TouchableOpacity>
                         </View>
+                        <View style={styles.bottom}>
+                                <Text style ={styles.bottomText}>
+                                {translations.termsConditions}
+                                </Text>
+                        </View>
+                    </Animatable.View>
                     </View>
-                </View>
-        );
-    }
+            </ImageBackground>
+    );
 }
 
-const welcome = StyleSheet.create({
+const styles = StyleSheet.create({
     container : {
-        flex :1,
-        backgroundColor : '#0A5E2AFF',
+        flex: 1,
     },
     header : {
         alignItems : 'center',
@@ -55,11 +74,19 @@ const welcome = StyleSheet.create({
         fontFamily : 'times new roman',
         color:'white',
     },
-    logbut : {
+    logo: {
+        width: 400,
+        height: 100,
+        marginTop : 20,
+        alignItems:'center',
+        justifyContent: 'center'
+    },
+    card : {
         fontSize : 60,
         marginTop : 20,
-        flex :2,
-        backgroundColor : 'white',
+        flex: 2,
+        justifyContent: 'space-around',
+        backgroundColor: 'rgba(255, 255, 255, 0.7)',
         borderTopLeftRadius: 50,
         borderTopRightRadius :50,
     },
@@ -72,7 +99,11 @@ const welcome = StyleSheet.create({
         lineHeight : 35,
         color:'white',
     },
-    registerButton : {
+    buttonWrapper: {
+        flex: 1,
+        justifyContent: "space-around"
+    },
+    button : {
         display : 'flex',
         alignItems : 'center',
         backgroundColor :'#B33771',
@@ -86,25 +117,23 @@ const welcome = StyleSheet.create({
         paddingVertical : 18,
         marginHorizontal : 60,
         marginTop : 70,
-      },
-      registerText : {
+    },
+    buttonText : {
         color: '#fff',
         fontWeight : 'bold',
         fontFamily : 'times new roman' ,
         fontSize:20 ,
-      },
-      bottomText : {
+    },
+    bottomText : {
         fontSize :20,
         fontWeight : 'bold',
         position :'absolute',
         bottom :20,
         fontFamily : 'times new roman' ,
-      },
-      bottom:{
+    },
+    bottom:{
         alignItems:'center',
         flex: 1,
-      }
+    }
 
 });
-
-export default Welcome;
