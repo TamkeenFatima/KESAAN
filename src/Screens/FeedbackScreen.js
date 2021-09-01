@@ -8,6 +8,7 @@ import {
     Keyboard,
     TouchableOpacity,
     TouchableWithoutFeedback,
+    Alert,
 } from 'react-native';
 import RadioButtonRN from 'radio-buttons-react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -18,41 +19,101 @@ import { CheckBox } from 'react-native-elements';
 import UserInfo from '../../assets/UserInfo';
 import Feedback from '../../assets/Feedback';
 
-const radioBtn = ( data ) => {
-    return (
-        <RadioButtonRN
-            data={data}
-            selectedBtn={(e) => console.log(e)}
-            activeColor='#d0b206'
-            icon={
-                <Icon
-                    name="check-circle"
-                    size={25}
-                    color="#d0b206"
-                />
-            }
-        />
-    )
-}
+export default function FeedbackScreen({navigation}) {
 
-function handleCheckboxPress (field, value, setValue, checked) {
-    if(checked) {
-        const newValue = field.filter(
-            (x) => x!==value
-        );
-        setValue(newValue)
-    }
-    else {
-        setValue(
-            [
-                ...field,
-                value
-            ]
+    const keys = Object.keys(Feedback);
+
+    const [feedback, setFeedback] = useState({
+        location_id: 0,
+        farmer_name: UserInfo.name,	
+        state_name: UserInfo.state,
+        district_name: UserInfo.district,
+        block_name: UserInfo.block,
+        mobile_num: UserInfo.mobile,
+        age: '',
+        gender: '',
+        education: '',
+        landholding_type: '',
+        farming_type: '',
+        landholding_area: '',
+        wheat_area: '',
+        rice_area: '',
+        sugarcane_area: '',
+        mustard_area: '',
+        maize_area: '',
+        potato_area: '',
+        fodder_area: '',
+        vegetable_area: '',
+        animal_husbandry: '',
+        poultry_farming: '',
+        fish_farming: '',
+        horticultural_crops: '',
+        bulletin_received: '',
+        sources: '',
+        bulletin_timely_issued: '',	
+        feedback_for_bulletin_date: '',
+        bulletin_useful: '',	
+        bulletin_not_useful: '',
+        advice_not_useful: '',
+        useful_agri_operations: '',
+        other_info_req: '',
+        how_much_useful: '',
+        shared_w_others: '',
+        economic_benefits: '',
+        avg_production_lost: '',
+        ratings: 5,
+        farmer_email: '',
+    })
+
+    const radioBtn = ( data ) => {
+        return (
+            <RadioButtonRN
+                data={Feedback[data].options}
+                selectedBtn={(e) => {
+                    let value = {...feedback};
+                    value[data] = e.label;
+                    setFeedback({...value});
+                    console.log(feedback);
+                }}
+                activeColor='#d0b206'
+                icon={
+                    <Icon
+                        name="check-circle"
+                        size={25}
+                        color="#d0b206"
+                    />
+                }
+            />
         )
     }
-}
 
-export default function FeedbackScreen({navigation}) {
+    function handleCheckboxPress (field, value, checked) {
+        if(checked) {
+            const newValue = checkbox[field].filter(
+                (x) => x!==value
+            );
+            const newCheckbox = { ...checkbox }
+            newCheckbox[field] = newValue;
+            setCheckbox({ ...newCheckbox })
+        }
+        else {
+            const newValue = [
+                ...checkbox[field],
+                value
+            ]
+            const newCheckbox = { ...checkbox }
+            newCheckbox[field] = newValue;
+            setCheckbox( {...newCheckbox} )
+        }
+    }
+
+    const handleTextInputChange = (val, item) => {
+        const newValue = { ...feedback };
+        feedback[item] = val;
+        setFeedback({...newValue});
+        console.log(feedback);
+    }
+
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
     const showDatePicker = () => {
@@ -64,30 +125,50 @@ export default function FeedbackScreen({navigation}) {
     };
 
     const handleConfirm = (date) => {
-        console.warn("A date has been picked: ", date);
+        console.log(date);
         hideDatePicker();
     };
 
-    const [animal_husbandry, set_animal_husbandry] = useState([]);
-    const [horticultural_crops, set_horticultural_crops] = useState([]);
-    const [sources, setSources] = useState([]);
-    const [useful_agri_operations, set_useful_agri_operations] = useState([]);
+    const [checkbox, setCheckbox] = useState({
+        animal_husbandry: [],
+        horticultural_crops: [],
+        sources: [],
+        useful_agri_operations: [],
+    });
 
-    const [isAgeSelected, setAgeSelection] = useState(false);
-    const toggleAgeSelection = () => setAgeSelection(value => !value);
+    const [isSelected, setSelection] = useState({
+        age: false,
+        other_info_req: false,
+        how_much_useful: false,
+        economic_benefits: false,
+    });
 
-    const [isDateSelected, setDateSelection] = useState(false);
-    const toggleDateSelection = () => setDateSelection(value => !value);
+    const toggleSelection = (data) => {
+        const newValue = { ...isSelected };
+        newValue[data] = !newValue[data];
+        setSelection( {...newValue} );
+    }
 
-    const [isEcoSelected, setEcoSelection] = useState(false);
-    const toggleEcoSelection = () => setEcoSelection(value => !value);
+    const [isDateSelected, setDateSelection] = useState({
+        feedback_for_bulletin_date: false
+    });
+    const toggleDateSelection = (data) => {
+        const newValue = { ...isDateSelected };
+        newValue[data] = !newValue[data];
+        setDateSelection( {...newValue} );
+    };
 
-    const [isInfoSelected, setInfoSelection] = useState(false);
-    const toggleInfoSelection = () => setInfoSelection(value => !value);
-
-    const [isUsefulSelected, setUsefulSelection] = useState(false);
-    const toggleUsefulSelection = () => setUsefulSelection(value => !value);
-
+    const handleSubmit = () => {
+        const questions = Object.keys(feedback);
+        questions.map((item) => {
+            if ( feedback[item] == null ) {
+                Alert.alert('All questions are mandatory. Please answer them and then submit the form.');
+            }
+            else {
+                console.log(feedback);
+            }
+        })
+    }
     return (
         <>
             <View style={styles.header}>
@@ -109,7 +190,7 @@ export default function FeedbackScreen({navigation}) {
                                     <TextInput
                                         style={[styles.input, {backgroundColor: '#dfe4ea'}]}
                                         editable={false}
-                                        value={UserInfo.name}
+                                        value={feedback.name}
                                     />
                                 </View>
                                 <View style={styles.inputBox}>
@@ -117,7 +198,7 @@ export default function FeedbackScreen({navigation}) {
                                     <TextInput
                                         style={[styles.input, {backgroundColor: '#dfe4ea'}]}
                                         editable={false}
-                                        value={UserInfo.state}
+                                        value={feedback.state}
                                     />
                                 </View>
                                 <View style={styles.inputBox}>
@@ -125,7 +206,7 @@ export default function FeedbackScreen({navigation}) {
                                     <TextInput
                                         style={[styles.input, {backgroundColor: '#dfe4ea'}]}
                                         editable={false}
-                                        value={UserInfo.district}
+                                        value={feedback.district}
                                     />
                                 </View>
                                 <View style={styles.inputBox}>
@@ -133,7 +214,7 @@ export default function FeedbackScreen({navigation}) {
                                     <TextInput
                                         style={[styles.input, {backgroundColor: '#dfe4ea'}]}
                                         editable={false}
-                                        value={UserInfo.block}
+                                        value={feedback.block}
                                     />
                                 </View>
                                 <View style={styles.inputBox}>
@@ -141,235 +222,98 @@ export default function FeedbackScreen({navigation}) {
                                     <TextInput
                                         style={[styles.input, {backgroundColor: '#dfe4ea'}]}
                                         editable={false}
-                                        value={UserInfo.mobile}
+                                        value={feedback.mobile}
                                     />
                                 </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>Age</Text>
-                                    <TextInput
-                                        onFocus={toggleAgeSelection}
-                                        onBlur={toggleAgeSelection}
-                                        style={isAgeSelected ? ([styles.input, {borderWidth: 1, borderColor: '#d0b206', backgroundColor: '#f8f9f8'}]) : (styles.input)}
-                                        keyboardType='number-pad'
-                                    />
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.gender.q}</Text>
-                                    {radioBtn(Feedback.gender.options)}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.education.q}</Text>
-                                    {radioBtn(Feedback.education.options)}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.landHoldingType.q}</Text>
-                                    {radioBtn(Feedback.landHoldingType.options)}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.farmingType.q}</Text>
-                                    {radioBtn(Feedback.farmingType.options)}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.landHoldingArea.q}</Text>
-                                    {radioBtn(Feedback.landHoldingArea.options)}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.wheatArea.q}</Text>
-                                    {radioBtn(Feedback.wheatArea.options)}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.riceArea.q}</Text>
-                                    {radioBtn(Feedback.riceArea.options)}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.sugarcaneArea.q}</Text>
-                                    {radioBtn(Feedback.sugarcaneArea.options)}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.mustardArea.q}</Text>
-                                    {radioBtn(Feedback.mustardArea.options)}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.maizeArea.q}</Text>
-                                    {radioBtn(Feedback.maizeArea.options)}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.potatoArea.q}</Text>
-                                    {radioBtn(Feedback.potatoArea.options)}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.fodderArea.q}</Text>
-                                    {radioBtn(Feedback.fodderArea.options)}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.vegetableArea.q}</Text>
-                                    {radioBtn(Feedback.vegetableArea.options)}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.animalHusbandry.q}</Text>
-                                    {Feedback.animalHusbandry.options.map((item, index) => {
-                                        const checked = animal_husbandry.includes(item);
+
+                                {keys.map((item, index) => {
+                                    if ( Feedback[item].type == 'Radio Button' ) {
                                         return (
-                                            <CheckBox
-                                                title={item}
-                                                key={index}
-                                                checked={checked}
-                                                onPress={() => handleCheckboxPress(animal_husbandry, item, set_animal_husbandry, checked)}
-                                                checkedColor='#d0b206'
-                                                containerStyle={checked ? ([styles.checkboxContainer, {borderWidth: 1, borderColor: '#d0b206', backgroundColor: '#f8f9f8'}]) : (styles.checkboxContainer)}
-                                                style={styles.checkbox}
-                                            />
+                                            <View style={styles.inputBox} key={index}>
+                                                <Text style={styles.inputLabel}>{Feedback[item].q}</Text>
+                                                {radioBtn(item)}
+                                            </View>
                                         )
-                                    })}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.poultryFarming.q}</Text>
-                                    {radioBtn(Feedback.poultryFarming.options)}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.fishFarming.q}</Text>
-                                    {radioBtn(Feedback.fishFarming.options)}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.horticulturalCrops.q}</Text>
-                                    {Feedback.horticulturalCrops.options.map((item, index) => {
-                                        const checked = horticultural_crops.includes(item);
+                                    }
+                                    else if ( Feedback[item].type == 'Checkbox' ) {
                                         return (
-                                            <CheckBox
-                                                title={item}
-                                                key={index}
-                                                checked={checked}
-                                                onPress={() => handleCheckboxPress(horticultural_crops, item, set_horticultural_crops, checked)}
-                                                checkedColor='#d0b206'
-                                                containerStyle={checked ? ([styles.checkboxContainer, {borderWidth: 1, borderColor: '#d0b206', backgroundColor: '#f8f9f8'}]) : (styles.checkboxContainer)}
-                                                style={styles.checkbox}
-                                            />
+                                            <View style={styles.inputBox} key={index}>
+                                                <Text style={styles.inputLabel}>{Feedback[item].q}</Text>
+                                                {Feedback[item].options.map((data, loc) => {
+                                                    const checked = checkbox[item].includes(data);
+                                                    return (
+                                                        <CheckBox
+                                                            title={data}
+                                                            key={loc}
+                                                            checked={checked}
+                                                            onPress={() => handleCheckboxPress(item, data, checked)}
+                                                            checkedColor='#d0b206'
+                                                            containerStyle={checked ? ([styles.checkboxContainer, {borderWidth: 1, borderColor: '#d0b206', backgroundColor: '#f8f9f8'}]) : (styles.checkboxContainer)}
+                                                            style={styles.checkbox}
+                                                        />
+                                                    )
+                                                })}
+                                            </View>
                                         )
-                                    })}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.bulletins_received.q}</Text>
-                                    {radioBtn(Feedback.bulletins_received.options)}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.source.q}</Text>
-                                    {Feedback.source.options.map((item, index) => {
-                                        const checked = sources.includes(item);
+                                    }
+                                    else if ( Feedback[item].type == 'Text Input' ) {
                                         return (
-                                            <CheckBox
-                                                title={item}
-                                                key={index}
-                                                checked={checked}
-                                                onPress={() => handleCheckboxPress(sources, item, setSources, checked)}
-                                                checkedColor='#d0b206'
-                                                containerStyle={checked ? ([styles.checkboxContainer, {borderWidth: 1, borderColor: '#d0b206', backgroundColor: '#f8f9f8'}]) : (styles.checkboxContainer)}
-                                                style={styles.checkbox}
-                                            />
+                                            <View style={styles.inputBox} key={index}>
+                                                <Text style={styles.inputLabel}>{Feedback[item].q}</Text>
+                                                <TextInput
+                                                    onFocus={() => {toggleSelection(item)}}
+                                                    onBlur={() => {toggleSelection(item)}}
+                                                    value={String(feedback[item])}
+                                                    onChangeText={(val) => {handleTextInputChange(val, item)}}
+                                                    style={isSelected[item] ? ([styles.input, {borderWidth: 1, borderColor: '#d0b206', backgroundColor: '#f8f9f8'}]) : (styles.input)}
+                                                    autoCapitalize='none'
+                                                    keyboardType={(item === 'age') ? "number-pad" : "default"}
+                                                />
+                                            </View>
                                         )
-                                    })}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.issue_date.q}</Text>
-                                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                                        <TextInput
-                                            onFocus={toggleDateSelection}
-                                            onBlur={toggleDateSelection}
-                                            style={isDateSelected ? ([styles.input, {width: '90%', borderWidth: 1, borderColor: '#d0b206', backgroundColor: '#f8f9f8'}]) : ([styles.input, {width: '90%'}])}
-                                            keyboardType="number-pad"
-                                        />
-                                        <TouchableOpacity style={{backgroundColor: '#d0b206', alignItems: 'center', padding: 5}} onPress={showDatePicker}>
-                                            <Icon2
-                                                name="calendar-sharp"
-                                                size={30}
-                                                color="#fff"
-                                            />
-                                        </TouchableOpacity>
-                                        <DateTimePickerModal
-                                            isVisible={isDatePickerVisible}
-                                            mode="date"
-                                            onConfirm={handleConfirm}
-                                            onCancel={hideDatePicker}
-                                        />
-                                    </View>
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.bulletin_useful.q}</Text>
-                                    {radioBtn(Feedback.bulletin_useful.options)}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.reason_bulletin.q}</Text>
-                                    {radioBtn(Feedback.reason_bulletin.options)}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.reason_advice.q}</Text>
-                                    {radioBtn(Feedback.reason_advice.options)}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.agriculture_operation.q}</Text>
-                                    {Feedback.agriculture_operation.options.map((item, index) => {
-                                        const checked = useful_agri_operations.includes(item);
+                                    }
+                                    else if ( Feedback[item].type == 'Date' ) {
                                         return (
-                                            <CheckBox
-                                                title={item}
-                                                key={index}
-                                                checked={checked}
-                                                onPress={() => handleCheckboxPress(useful_agri_operations, item, set_useful_agri_operations, checked)}
-                                                checkedColor='#d0b206'
-                                                containerStyle={checked ? ([styles.checkboxContainer, {borderWidth: 1, borderColor: '#d0b206', backgroundColor: '#f8f9f8'}]) : (styles.checkboxContainer)}
-                                                style={styles.checkbox}
-                                            />
+                                            <View style={styles.inputBox} key={index}>
+                                                <Text style={styles.inputLabel}>{Feedback[item].q}</Text>
+                                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                                                    <TextInput
+                                                        onFocus={() => {toggleDateSelection(item)}}
+                                                        onBlur={() => {toggleDateSelection(item)}}
+                                                        editable={false}
+                                                        style={isDateSelected[item] ? ([styles.input, {width: '90%', borderWidth: 1, borderColor: '#d0b206', backgroundColor: '#f8f9f8'}]) : ([styles.input, {width: '90%'}])}
+                                                        keyboardType="number-pad"
+                                                    />
+                                                    <TouchableOpacity style={{backgroundColor: '#d0b206', alignItems: 'center', padding: 5}} onPress={showDatePicker}>
+                                                        <Icon2
+                                                            name="calendar-sharp"
+                                                            size={30}
+                                                            color="#fff"
+                                                        />
+                                                    </TouchableOpacity>
+                                                    <DateTimePickerModal
+                                                        isVisible={isDatePickerVisible}
+                                                        mode="date"
+                                                        onConfirm={handleConfirm}
+                                                        onCancel={hideDatePicker}
+                                                    />
+                                                </View>
+                                            </View>
                                         )
-                                    })}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.other_info.q}</Text>
-                                    <TextInput
-                                        onFocus={toggleInfoSelection}
-                                        onBlur={toggleInfoSelection}
-                                        style={isInfoSelected ? ([styles.input, {borderWidth: 1, borderColor: '#d0b206', backgroundColor: '#f8f9f8'}]) : (styles.input)}
-                                        autoCapitalize='none'
-                                        keyboardType="default"
-                                        textContentType='name'
-                                    />
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.how_much_useful.q}</Text>
-                                    <TextInput
-                                        onFocus={toggleUsefulSelection}
-                                        onBlur={toggleUsefulSelection}
-                                        style={isUsefulSelected ? ([styles.input, {borderWidth: 1, borderColor: '#d0b206', backgroundColor: '#f8f9f8'}]) : (styles.input)}
-                                        autoCapitalize='none'
-                                        keyboardType="default"
-                                        textContentType='name'
-                                    />
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.share.q}</Text>
-                                    {radioBtn(Feedback.share.options)}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.economic_benefit.q}</Text>
-                                    <TextInput
-                                        onFocus={toggleEcoSelection}
-                                        onBlur={toggleEcoSelection}
-                                        style={isEcoSelected ? ([styles.input, {borderWidth: 1, borderColor: '#d0b206', backgroundColor: '#f8f9f8'}]) : (styles.input)}
-                                        autoCapitalize='none'
-                                        keyboardType="default"
-                                        textContentType='name'
-                                    />
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.production_lost.q}</Text>
-                                    {radioBtn(Feedback.production_lost.options)}
-                                </View>
-                                <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>{Feedback.ratings.q}</Text>
-                                    <AirbnbRating 
-                                        size={20}
-                                        defaultRating={0}
-                                    />
-                                </View>
-                                <TouchableOpacity style={styles.submitButton}>
+                                    }
+                                    else if ( Feedback[item].type == 'Ratings' ) {
+                                        return (
+                                            <View style={styles.inputBox} key={index}>
+                                                <Text style={styles.inputLabel}>{Feedback[item].q}</Text>
+                                                <AirbnbRating 
+                                                    size={20}
+                                                    defaultRating={0}
+                                                />
+                                            </View>
+                                        )
+                                    }
+                                })}
+                                <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
                                     <Text style={styles.submitButtonText}>Submit</Text>
                                 </TouchableOpacity>
                             </View>
