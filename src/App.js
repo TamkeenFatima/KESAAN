@@ -20,6 +20,7 @@ import {
   Text,
   useColorScheme,
   View,
+  Alert
 } from 'react-native';
 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -138,18 +139,50 @@ const App = () => {
       }
       dispatch({ type: 'LOGOUT' });
     },
-    register: async (info) => {
-      let userToken;
-      userToken = null;
-      try {
-        userToken = 'sfdg';
-        await AsyncStorage.setItem('userToken', userToken)
-        await AsyncStorage.setItem('isFirstRegistration', JSON.stringify(false))
-      } catch(e) {
-        console.log(e);
-      }
-      console.log(info)
-      dispatch({ type: 'REGISTER', id: info.user_mobile, lang: info.sel_lang, token: userToken });
+    register: (info) => {
+      let RegisterAPIURL = "http://10.0.2.2:80/api/register.php";
+
+      let headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      };
+
+      let Data = {
+        location_id: info.location_id,
+        sel_lang: info.sel_lang,
+        user_name: info.user_name,
+        user_mobile: info.user_mobile,
+        mob_model: info.mob_model,
+        mob_os: info.mob_os,
+        os_version: info.os_version,
+      };
+
+      fetch (RegisterAPIURL,
+        {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify(Data)
+        }
+      )
+      .then((response) => response.json())
+      .then(async (response) => {
+          Alert.alert(response[0].Message);
+          if ( response[0].Message == "Successfully registered!" ) {
+            let userToken;
+            userToken = null;
+            try {
+              userToken = 'sfdg';
+              await AsyncStorage.setItem('userToken', userToken)
+              await AsyncStorage.setItem('isFirstRegistration', JSON.stringify(false))
+            } catch(e) {
+              console.log(e);
+            }
+            console.log(info)
+            dispatch({ type: 'REGISTER', id: info.user_mobile, lang: info.sel_lang, token: userToken });
+      }})
+      .catch((e) => {
+        Alert.alert("ERROR " + e);
+      })
     },
     selectLang: (lang) => {
       dispatch({ type: 'LANGUAGE', id: lang });
