@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
@@ -24,13 +24,13 @@ export default function FeedbackScreen({navigation}) {
     const keys = Object.keys(Feedback);
 
     const [feedback, setFeedback] = useState({
-        location_id: 0,
+        location_id: 655,
         farmer_name: UserInfo.name,	
         state_name: UserInfo.state,
         district_name: UserInfo.district,
         block_name: UserInfo.block,
         mobile_num: UserInfo.mobile,
-        age: '',
+        age: 0,
         gender: '',
         education: '',
         landholding_type: '',
@@ -51,7 +51,7 @@ export default function FeedbackScreen({navigation}) {
         bulletin_received: '',
         sources: '',
         bulletin_timely_issued: '',	
-        feedback_for_bulletin_date: '',
+        feedback_for_bulletin_date: new Date().toString().slice(4,15),
         bulletin_useful: '',	
         bulletin_not_useful: '',
         advice_not_useful: '',
@@ -61,8 +61,7 @@ export default function FeedbackScreen({navigation}) {
         shared_w_others: '',
         economic_benefits: '',
         avg_production_lost: '',
-        ratings: 5,
-        farmer_email: '',
+        ratings: 0,
     })
 
     const radioBtn = ( data ) => {
@@ -73,7 +72,7 @@ export default function FeedbackScreen({navigation}) {
                     let value = {...feedback};
                     value[data] = e.label;
                     setFeedback({...value});
-                    console.log(feedback);
+                    // console.log(feedback);
                 }}
                 activeColor='#d0b206'
                 icon={
@@ -86,6 +85,13 @@ export default function FeedbackScreen({navigation}) {
             />
         )
     }
+
+    const [checkbox, setCheckbox] = useState({
+        animal_husbandry: [],
+        horticultural_crops: [],
+        sources: [],
+        useful_agri_operations: [],
+    });
 
     function handleCheckboxPress (field, value, checked) {
         if(checked) {
@@ -105,36 +111,18 @@ export default function FeedbackScreen({navigation}) {
             newCheckbox[field] = newValue;
             setCheckbox( {...newCheckbox} )
         }
+        const newFeedback = { ...feedback };
+        for (let key in checkbox) {
+            newFeedback[key] = checkbox[key].join(';');
+        }
+        setFeedback({ ...newFeedback });
     }
 
     const handleTextInputChange = (val, item) => {
         const newValue = { ...feedback };
-        feedback[item] = val;
+        newValue[item] = val;
         setFeedback({...newValue});
-        console.log(feedback);
     }
-
-    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-
-    const showDatePicker = () => {
-        setDatePickerVisibility(true);
-    };
-
-    const hideDatePicker = () => {
-        setDatePickerVisibility(false);
-    };
-
-    const handleConfirm = (date) => {
-        console.log(date);
-        hideDatePicker();
-    };
-
-    const [checkbox, setCheckbox] = useState({
-        animal_husbandry: [],
-        horticultural_crops: [],
-        sources: [],
-        useful_agri_operations: [],
-    });
 
     const [isSelected, setSelection] = useState({
         age: false,
@@ -149,6 +137,26 @@ export default function FeedbackScreen({navigation}) {
         setSelection( {...newValue} );
     }
 
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const [date, setDate] = useState({
+        feedback_for_bulletin_date: new Date()
+    });
+
+    const showDatePicker = () => {
+        setDatePickerVisibility(true);
+    };
+
+    const hideDatePicker = () => {
+        setDatePickerVisibility(false);
+    };
+
+    const handleConfirm = (date, item) => {
+        let newValue = { ...feedback };
+        newValue[item] = date.toString().slice(4,15);
+        setFeedback({ ...newValue });
+        hideDatePicker();
+    };
+
     const [isDateSelected, setDateSelection] = useState({
         feedback_for_bulletin_date: false
     });
@@ -158,16 +166,39 @@ export default function FeedbackScreen({navigation}) {
         setDateSelection( {...newValue} );
     };
 
+    let empty = false;
+    useEffect(() => {
+        for (let key in feedback) {
+            if ( (feedback[key] == null)||(feedback[key] == '') ) {
+                empty = true;
+                break;
+            }
+        }
+    }, [feedback])
+
+    const updateFeedback = () => {
+        const newValue = { ...feedback };
+        for (let key in checkbox) {
+            newValue[key] = checkbox[key].join(';');
+        }
+        setFeedback({ ...newValue });
+        
+        handleSubmit();
+    }
+
     const handleSubmit = () => {
-        const questions = Object.keys(feedback);
-        questions.map((item) => {
-            if ( feedback[item] == null ) {
-                Alert.alert('All questions are mandatory. Please answer them and then submit the form.');
-            }
-            else {
-                console.log(feedback);
-            }
-        })
+        const newValue = { ...feedback };
+        for (let key in checkbox) {
+            newValue[key] = checkbox[key].join(';');
+        }
+        setFeedback({ ...newValue });
+        
+        if (empty) {
+            Alert.alert("All questions are mandatory. Please answer them and then submit the form.");
+        }
+        else {
+            console.log(feedback);
+        }
     }
     return (
         <>
@@ -190,7 +221,7 @@ export default function FeedbackScreen({navigation}) {
                                     <TextInput
                                         style={[styles.input, {backgroundColor: '#dfe4ea'}]}
                                         editable={false}
-                                        value={feedback.name}
+                                        value={feedback.farmer_name}
                                     />
                                 </View>
                                 <View style={styles.inputBox}>
@@ -198,7 +229,7 @@ export default function FeedbackScreen({navigation}) {
                                     <TextInput
                                         style={[styles.input, {backgroundColor: '#dfe4ea'}]}
                                         editable={false}
-                                        value={feedback.state}
+                                        value={feedback.state_name}
                                     />
                                 </View>
                                 <View style={styles.inputBox}>
@@ -206,7 +237,7 @@ export default function FeedbackScreen({navigation}) {
                                     <TextInput
                                         style={[styles.input, {backgroundColor: '#dfe4ea'}]}
                                         editable={false}
-                                        value={feedback.district}
+                                        value={feedback.district_name}
                                     />
                                 </View>
                                 <View style={styles.inputBox}>
@@ -214,7 +245,7 @@ export default function FeedbackScreen({navigation}) {
                                     <TextInput
                                         style={[styles.input, {backgroundColor: '#dfe4ea'}]}
                                         editable={false}
-                                        value={feedback.block}
+                                        value={feedback.block_name}
                                     />
                                 </View>
                                 <View style={styles.inputBox}>
@@ -222,7 +253,7 @@ export default function FeedbackScreen({navigation}) {
                                     <TextInput
                                         style={[styles.input, {backgroundColor: '#dfe4ea'}]}
                                         editable={false}
-                                        value={feedback.mobile}
+                                        value={feedback.mobile_num}
                                     />
                                 </View>
 
@@ -263,7 +294,6 @@ export default function FeedbackScreen({navigation}) {
                                                 <TextInput
                                                     onFocus={() => {toggleSelection(item)}}
                                                     onBlur={() => {toggleSelection(item)}}
-                                                    value={String(feedback[item])}
                                                     onChangeText={(val) => {handleTextInputChange(val, item)}}
                                                     style={isSelected[item] ? ([styles.input, {borderWidth: 1, borderColor: '#d0b206', backgroundColor: '#f8f9f8'}]) : (styles.input)}
                                                     autoCapitalize='none'
@@ -276,28 +306,45 @@ export default function FeedbackScreen({navigation}) {
                                         return (
                                             <View style={styles.inputBox} key={index}>
                                                 <Text style={styles.inputLabel}>{Feedback[item].q}</Text>
-                                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                                                    <TextInput
-                                                        onFocus={() => {toggleDateSelection(item)}}
-                                                        onBlur={() => {toggleDateSelection(item)}}
-                                                        editable={false}
-                                                        style={isDateSelected[item] ? ([styles.input, {width: '90%', borderWidth: 1, borderColor: '#d0b206', backgroundColor: '#f8f9f8'}]) : ([styles.input, {width: '90%'}])}
-                                                        keyboardType="number-pad"
-                                                    />
-                                                    <TouchableOpacity style={{backgroundColor: '#d0b206', alignItems: 'center', padding: 5}} onPress={showDatePicker}>
-                                                        <Icon2
-                                                            name="calendar-sharp"
-                                                            size={30}
-                                                            color="#fff"
+                                                <TouchableWithoutFeedback
+                                                    onPress={() => {
+                                                        showDatePicker();
+                                                        toggleDateSelection(item);
+                                                    }}
+                                                >
+                                                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                                                        <TextInput
+                                                            editable={false}
+                                                            value={feedback[item]}
+                                                            style={isDateSelected[item] ? ([styles.input, {width: '90%', borderWidth: 1, borderColor: '#d0b206', backgroundColor: '#f8f9f8'}]) : ([styles.input, {width: '90%'}])}
                                                         />
-                                                    </TouchableOpacity>
-                                                    <DateTimePickerModal
-                                                        isVisible={isDatePickerVisible}
-                                                        mode="date"
-                                                        onConfirm={handleConfirm}
-                                                        onCancel={hideDatePicker}
-                                                    />
-                                                </View>
+                                                        <TouchableOpacity
+                                                            style={{backgroundColor: '#d0b206', alignItems: 'center', padding: 5}}
+                                                            onPress={() => {
+                                                                showDatePicker();
+                                                                toggleDateSelection(item);
+                                                            }}
+                                                        >
+                                                            <Icon2
+                                                                name="calendar-sharp"
+                                                                size={30}
+                                                                color="#fff"
+                                                            />
+                                                        </TouchableOpacity>
+                                                        <DateTimePickerModal
+                                                            isVisible={isDatePickerVisible}
+                                                            mode="date"
+                                                            onConfirm={(date) => {
+                                                                handleConfirm(date, item);
+                                                                toggleDateSelection(item);
+                                                            }}
+                                                            onCancel={() => {
+                                                                hideDatePicker();
+                                                                toggleDateSelection(item);
+                                                            }}
+                                                        />
+                                                    </View>
+                                                </TouchableWithoutFeedback>
                                             </View>
                                         )
                                     }
@@ -308,12 +355,17 @@ export default function FeedbackScreen({navigation}) {
                                                 <AirbnbRating 
                                                     size={20}
                                                     defaultRating={0}
+                                                    onFinishRating={(rating) => {
+                                                        let newValue = { ...feedback };
+                                                        newValue[item] = rating;
+                                                        setFeedback({ ...newValue });
+                                                    }}
                                                 />
                                             </View>
                                         )
                                     }
                                 })}
-                                <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+                                <TouchableOpacity style={styles.submitButton} onPress={() => {updateFeedback()}}>
                                     <Text style={styles.submitButtonText}>Submit</Text>
                                 </TouchableOpacity>
                             </View>
