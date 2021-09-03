@@ -29,7 +29,7 @@ export default function HomeScreen({navigation}) {
     return (
         <>
             <View style={styles.header}>
-                <Text style={styles.heading}>{translations.weatherTitle}</Text>
+                <Text style={styles.heading}>{translations.Home.weatherTitle}</Text>
             </View>
             <ImageBackground
                 source={bgImg}

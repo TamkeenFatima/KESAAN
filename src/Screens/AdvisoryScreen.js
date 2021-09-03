@@ -23,7 +23,7 @@ export default function AdvisoryScreen({navigation}) {
         <>
             <View style={styles.header}>
                 <View>
-                    <Text style={styles.heading}>{translations.advisoryTitle}</Text>
+                    <Text style={styles.heading}>{translations.Advisory.advisoryTitle}</Text>
                 </View>
                 <View>
                     <Text style={styles.location}>{UserInfo.block}, {UserInfo.district}, {UserInfo.state}</Text>

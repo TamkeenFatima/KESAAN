@@ -18,11 +18,12 @@ import { AirbnbRating } from 'react-native-ratings';
 import { CheckBox } from 'react-native-elements';
 import UserInfo from '../../assets/UserInfo';
 import { LocalizationContext } from '../components/LocalisationContext';
-import Feedback from '../../assets/Feedback';
 
 export default function FeedbackScreen({navigation}) {
 
-    const keys = Object.keys(Feedback);
+    const { translations } = useContext(LocalizationContext);
+
+    const keys = Object.keys(translations.Feedback.form);
 
     const [feedback, setFeedback] = useState({
         location_id: 655,
@@ -68,7 +69,7 @@ export default function FeedbackScreen({navigation}) {
     const radioBtn = ( data ) => {
         return (
             <RadioButtonRN
-                data={Feedback[data].options}
+                data={translations.Feedback.form[data].options}
                 selectedBtn={(e) => {
                     let value = {...feedback};
                     value[data] = e.label;
@@ -139,9 +140,6 @@ export default function FeedbackScreen({navigation}) {
     }
 
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-    const [date, setDate] = useState({
-        feedback_for_bulletin_date: new Date()
-    });
 
     const showDatePicker = () => {
         setDatePickerVisibility(true);
@@ -202,13 +200,11 @@ export default function FeedbackScreen({navigation}) {
         }
     }
 
-    const { translations } = useContext(LocalizationContext);
-
     return (
         <>
             <View style={styles.header}>
                 <View>
-                    <Text style={styles.heading}>{translations.feedbackTitle}</Text>
+                    <Text style={styles.heading}>{translations.Feedback.feedbackTitle}</Text>
                 </View>
                 <View>
                     <Text style={styles.location}>{UserInfo.block}, {UserInfo.district}, {UserInfo.state}</Text>
@@ -262,19 +258,19 @@ export default function FeedbackScreen({navigation}) {
                                 </View>
 
                                 {keys.map((item, index) => {
-                                    if ( Feedback[item].type == 'Radio Button' ) {
+                                    if ( translations.Feedback.form[item].type == 'Radio Button' ) {
                                         return (
                                             <View style={styles.inputBox} key={index}>
-                                                <Text style={styles.inputLabel}>{Feedback[item].q}</Text>
+                                                <Text style={styles.inputLabel}>{translations.Feedback.form[item].q}</Text>
                                                 {radioBtn(item)}
                                             </View>
                                         )
                                     }
-                                    else if ( Feedback[item].type == 'Checkbox' ) {
+                                    else if ( translations.Feedback.form[item].type == 'Checkbox' ) {
                                         return (
                                             <View style={styles.inputBox} key={index}>
-                                                <Text style={styles.inputLabel}>{Feedback[item].q}</Text>
-                                                {Feedback[item].options.map((data, loc) => {
+                                                <Text style={styles.inputLabel}>{translations.Feedback.form[item].q}</Text>
+                                                {translations.Feedback.form[item].options.map((data, loc) => {
                                                     const checked = checkbox[item].includes(data);
                                                     return (
                                                         <CheckBox
@@ -291,10 +287,10 @@ export default function FeedbackScreen({navigation}) {
                                             </View>
                                         )
                                     }
-                                    else if ( Feedback[item].type == 'Text Input' ) {
+                                    else if ( translations.Feedback.form[item].type == 'Text Input' ) {
                                         return (
                                             <View style={styles.inputBox} key={index}>
-                                                <Text style={styles.inputLabel}>{Feedback[item].q}</Text>
+                                                <Text style={styles.inputLabel}>{translations.Feedback.form[item].q}</Text>
                                                 <TextInput
                                                     onFocus={() => {toggleSelection(item)}}
                                                     onBlur={() => {toggleSelection(item)}}
@@ -306,10 +302,10 @@ export default function FeedbackScreen({navigation}) {
                                             </View>
                                         )
                                     }
-                                    else if ( Feedback[item].type == 'Date' ) {
+                                    else if ( translations.Feedback.form[item].type == 'Date' ) {
                                         return (
                                             <View style={styles.inputBox} key={index}>
-                                                <Text style={styles.inputLabel}>{Feedback[item].q}</Text>
+                                                <Text style={styles.inputLabel}>{translations.Feedback.form[item].q}</Text>
                                                 <TouchableWithoutFeedback
                                                     onPress={() => {
                                                         showDatePicker();
@@ -352,10 +348,10 @@ export default function FeedbackScreen({navigation}) {
                                             </View>
                                         )
                                     }
-                                    else if ( Feedback[item].type == 'Ratings' ) {
+                                    else if ( translations.Feedback.form[item].type == 'Ratings' ) {
                                         return (
                                             <View style={styles.inputBox} key={index}>
-                                                <Text style={styles.inputLabel}>{Feedback[item].q}</Text>
+                                                <Text style={styles.inputLabel}>{translations.Feedback.form[item].q}</Text>
                                                 <AirbnbRating 
                                                     size={20}
                                                     defaultRating={0}
@@ -370,7 +366,7 @@ export default function FeedbackScreen({navigation}) {
                                     }
                                 })}
                                 <TouchableOpacity style={styles.submitButton} onPress={() => {updateFeedback()}}>
-                                    <Text style={styles.submitButtonText}>Submit</Text>
+                                    <Text style={styles.submitButtonText}>{translations.Feedback.submit}</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>

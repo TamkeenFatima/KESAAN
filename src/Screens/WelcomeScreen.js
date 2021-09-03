@@ -17,7 +17,7 @@ export default function Welcome ({navigation}) {
             >
                 <View style = { [styles.container, {flexDirection :'column'}] }>
                     <View style = {[styles.header, {flex : 3,}]}>
-                        <Text style = {styles.headerText}><B>{translations.welcomeText}</B></Text>
+                        <Text style = {styles.headerText}><B>{translations.Welcome.welcomeText}</B></Text>
                         <Image
                             style={styles.logo}
                             source={require('../../assets/images/Logo.png')}
@@ -28,10 +28,10 @@ export default function Welcome ({navigation}) {
                             fontFamily : 'times new roman',
                             color:'white',
                         }}>
-                            <I>{translations.app}</I>
+                            <I>{translations.Welcome.app}</I>
                         </Text>
                         <Text style ={styles.logodescription}>
-                            {translations.appDescription}
+                            {translations.Welcome.appDescription}
                         </Text>
                     </View>
                     <Animatable.View style = { styles.card} animation = 'fadeInUpBig'>
@@ -40,18 +40,18 @@ export default function Welcome ({navigation}) {
                                 onPress={()=> {
                                     navigation.navigate('Register')
                             }}>
-                                <Text style={styles.buttonText}>{translations.registerButton}</Text>
+                                <Text style={styles.buttonText}>{translations.Welcome.registerButton}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.button}
                                 onPress={()=> {
                                     navigation.navigate('LogIn')
                             }}>
-                                <Text style={styles.buttonText}>{translations.loginButton}</Text>
+                                <Text style={styles.buttonText}>{translations.Welcome.loginButton}</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.bottom}>
                                 <Text style ={styles.bottomText}>
-                                {translations.termsConditions}
+                                {translations.Welcome.termsConditions}
                                 </Text>
                         </View>
                     </Animatable.View>

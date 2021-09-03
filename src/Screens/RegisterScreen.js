@@ -18,9 +18,8 @@ import DeviceInfo from 'react-native-device-info';
 import { AuthContext } from '../components/context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // import IMEI from 'react-native-imei';
-// import LocationPicker from '../components/LocationPicker';
+
 import {statesUTs} from '../../assets/StatesUTs';
-import translations from '../../assets/languages/translations';
 import { LocalizationContext } from '../components/LocalisationContext';
 
 export default function RegisterScreen({navigation}) {
@@ -70,13 +69,13 @@ export default function RegisterScreen({navigation}) {
 
   const handleSubmit = () => {
     if ( (info.user_name.length == 0) && (info.user_mobile.length == 0) ) {
-      Alert.alert(translations.name_phone_empty)
+      Alert.alert(translations.Register.name_phone_empty)
     }
     else if ( info.user_name.length == 0 ) {
-      Alert.alert(translations.name_empty)
+      Alert.alert(translations.Register.name_empty)
     }
     else if ( info.user_mobile.length <10 ) {
-      Alert.alert(translations.invalid_phone_no)
+      Alert.alert(translations.Register.invalid_phone_no)
     }
     else {
       register(info);
@@ -138,13 +137,13 @@ export default function RegisterScreen({navigation}) {
                     source={require('../../assets/images/Logo.png')}
                    />
               </View>
-              <Text style={styles.registerTitleText}>{translations.registerText}</Text>
+              <Text style={styles.registerTitleText}>{translations.Register.registerText}</Text>
               <View style={styles.hr}></View>
               <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>{translations.registerLanguage}</Text>
+                <Text style={styles.inputLabel}>{translations.Register.registerLanguage}</Text>
                 <Picker
                   style={styles.picker}
-                  prompt={translations.registerLanguage}
+                  prompt={translations.Register.registerLanguage}
                   selectedValue={info.sel_lang}
                   onValueChange={ (itemValue) => {
                     setInfo({...info, sel_lang: itemValue});
@@ -158,7 +157,7 @@ export default function RegisterScreen({navigation}) {
                 </Picker>
               </View>
               <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>{translations.registerName}</Text>
+                <Text style={styles.inputLabel}>{translations.Register.registerName}</Text>
                 <TextInput
                   style={styles.input}
                   autoCapitalize='none'
@@ -170,7 +169,7 @@ export default function RegisterScreen({navigation}) {
                 />
               </View>
               <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>{translations.registerMobileNo}</Text>
+                <Text style={styles.inputLabel}>{translations.Register.registerMobileNo}</Text>
                 <TextInput
                   style={styles.input}
                   autoCapitalize='none'
@@ -182,7 +181,7 @@ export default function RegisterScreen({navigation}) {
                 />
               </View>
               <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>{translations.registerState}</Text>
+                <Text style={styles.inputLabel}>{translations.Register.registerState}</Text>
                 <Picker
                   style={styles.picker}
                   selectedValue={statePickerValue}
@@ -193,7 +192,7 @@ export default function RegisterScreen({navigation}) {
                 </Picker>
               </View>
               <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>{translations.registerDistrict}</Text>
+                <Text style={styles.inputLabel}>{translations.Register.registerDistrict}</Text>
                 <TextInput
                   style={styles.input}
                   autoCapitalize='none'
@@ -202,7 +201,7 @@ export default function RegisterScreen({navigation}) {
                 />
               </View>
               <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>{translations.registerBlock}</Text>
+                <Text style={styles.inputLabel}>{translations.Register.registerBlock}</Text>
                 <TextInput
                   style={styles.input}
                   autoCapitalize='none'
@@ -215,7 +214,7 @@ export default function RegisterScreen({navigation}) {
                 style={styles.registerButton}
                 onPress = {() => {handleSubmit()}}
               >
-                <Text style={styles.registerButtonText}>{translations.registerButton}</Text>
+                <Text style={styles.registerButtonText}>{translations.Register.registerText}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={()=> {
@@ -223,7 +222,7 @@ export default function RegisterScreen({navigation}) {
                 }}
               >
                 <Text style={styles.loginText}>
-                  {translations.registerAccount}
+                  {translations.Register.registerAccount}
                 </Text>
               </TouchableOpacity>
             </View>

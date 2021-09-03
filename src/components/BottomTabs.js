@@ -23,7 +23,7 @@ const BottomTabScreens = () => {
                 component={HomeScreen}
                 options={{
                     title: 'Home',
-                    tabBarLabel: translations.home_tab,
+                    tabBarLabel: translations.Home.home_tab,
                     tabBarColor: '#897396',
                     tabBarIcon: ({ color }) => (
                         <Icon name="home" color={color} size={26} />
@@ -35,7 +35,7 @@ const BottomTabScreens = () => {
                 component={AdvisoryScreen}
                 options={{
                     title: 'Agro-Advisory',
-                    tabBarLabel: translations.advisory_tab,
+                    tabBarLabel: translations.Advisory.advisory_tab,
                     tabBarColor: '#009387',
                     tabBarIcon: ({ color }) => (
                         <Icon name="information-circle" color={color} size={26} />
@@ -47,7 +47,7 @@ const BottomTabScreens = () => {
                 component={FeedbackScreen}
                 options={{
                     title: 'Feedback',
-                    tabBarLabel: translations.feedback_tab,
+                    tabBarLabel: translations.Feedback.feedback_tab,
                     tabBarColor: '#d0b206',
                     tabBarIcon: ({ color }) => (
                         <Icon name="chatbox-ellipses" color={color} size={26} />
@@ -59,7 +59,7 @@ const BottomTabScreens = () => {
                 component={LinksScreen}
                 options={{
                     title: 'Useful Links',
-                    tabBarLabel: translations.links_tab,
+                    tabBarLabel: translations.Links.links_tab,
                     tabBarColor: '#d02860',
                     tabBarIcon: ({ color }) => (
                         <Icon name="link" color={color} size={26} />
