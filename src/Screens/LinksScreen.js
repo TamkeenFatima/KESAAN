@@ -1,21 +1,14 @@
 import React, { useContext } from 'react';
 import { View, Text, StyleSheet, ImageBackground } from 'react-native';
 import Hyperlink from 'react-native-hyperlink';
+import Header from '../components/Header';
 import { LocalizationContext } from '../components/LocalisationContext';
 
 export default function LinksScreen({navigation}) {
     const { translations } = useContext(LocalizationContext);
     return (
         <>
-            <View style={styles.header}>
-                <View>
-                    <Text style={styles.heading}>{translations.Links.linksTitle}</Text>
-                </View>
-                <View>
-                    <Text style={styles.location}>{UserInfo.block}, {UserInfo.district}, {UserInfo.state}</Text>
-                    <Text style={styles.date}>{UserInfo.date}</Text>
-                </View>
-            </View>
+            <Header title={translations.Links.linksTitle} barColor='#d02860' />
             <ImageBackground
                 source={require('../../assets/images/useful-links.jpg')}
                 style={{
@@ -52,30 +45,6 @@ export default function LinksScreen({navigation}) {
 }
 
 const styles= StyleSheet.create({
-    header: {
-        backgroundColor: '#d02860',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: 15,
-    },
-    heading: {
-        color: '#000',
-        fontSize: 20,
-        fontFamily: 'Courier New',
-        fontWeight: 'bold',
-    },
-    location: {
-        color: '#000',
-        fontSize: 12,
-        fontFamily: 'Courier New',
-        fontWeight: 'bold',
-    },
-    date: {
-        color: '#000',
-        fontSize: 10,
-        fontFamily: 'Courier New',
-        fontWeight: 'bold',
-    },
     container: {
         flex: 1,
         alignItems: 'center',

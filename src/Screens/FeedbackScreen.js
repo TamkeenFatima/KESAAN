@@ -17,6 +17,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { AirbnbRating } from 'react-native-ratings';
 import { CheckBox } from 'react-native-elements';
 import UserInfo from '../../assets/UserInfo';
+import Header from '../components/Header';
 import { LocalizationContext } from '../components/LocalisationContext';
 
 export default function FeedbackScreen({navigation}) {
@@ -202,15 +203,7 @@ export default function FeedbackScreen({navigation}) {
 
     return (
         <>
-            <View style={styles.header}>
-                <View>
-                    <Text style={styles.heading}>{translations.Feedback.feedbackTitle}</Text>
-                </View>
-                <View>
-                    <Text style={styles.location}>{UserInfo.block}, {UserInfo.district}, {UserInfo.state}</Text>
-                    <Text style={styles.date}>{UserInfo.date}</Text>
-                </View>
-            </View>
+            <Header title={translations.Feedback.feedbackTitle} barColor='#d0b206' />
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
                 <View style={styles.container}>
                     <ScrollView>
@@ -378,30 +371,6 @@ export default function FeedbackScreen({navigation}) {
 }
 
 const styles=StyleSheet.create({
-    header: {
-        backgroundColor: '#d0b206',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: 15,
-    },
-    heading: {
-        color: '#000',
-        fontSize: 20,
-        fontFamily: 'Courier New',
-        fontWeight: 'bold',
-    },
-    location: {
-        color: '#000',
-        fontSize: 12,
-        fontFamily: 'Courier New',
-        fontWeight: 'bold',
-    },
-    date: {
-        color: '#000',
-        fontSize: 10,
-        fontFamily: 'Courier New',
-        fontWeight: 'bold',
-    },
     container: {
         flex: 1,
         position: 'relative',

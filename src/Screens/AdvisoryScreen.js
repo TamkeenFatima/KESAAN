@@ -11,6 +11,7 @@ import {
 import Advisory from '../../assets/Advisory';
 import UserInfo from '../../assets/UserInfo';
 import bgImg from '../components/BgImg';
+import Header from '../components/Header';
 import { LocalizationContext } from '../components/LocalisationContext';
 
 export default function AdvisoryScreen({navigation}) {
@@ -21,15 +22,7 @@ export default function AdvisoryScreen({navigation}) {
     let BgImg = '';
     return (
         <>
-            <View style={styles.header}>
-                <View>
-                    <Text style={styles.heading}>{translations.Advisory.advisoryTitle}</Text>
-                </View>
-                <View>
-                    <Text style={styles.location}>{UserInfo.block}, {UserInfo.district}, {UserInfo.state}</Text>
-                    <Text style={styles.date}>{UserInfo.date}</Text>
-                </View>
-            </View>
+            <Header title={translations.Advisory.advisoryTitle} barColor='#009387' />
             <ScrollView
                 pagingEnabled={true}
                 initialPage={0}
@@ -130,30 +123,6 @@ const styles= StyleSheet.create({
         flex: 1,
         backgroundColor: 'rgba(0, 0, 0, 0.3)',
         padding: 20,
-    },
-    header: {
-        backgroundColor: '#009387',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: 15,
-    },
-    heading: {
-        color: '#000',
-        fontSize: 20,
-        fontFamily: 'Courier New',
-        fontWeight: 'bold',
-    },
-    location: {
-        color: '#000',
-        fontSize: 12,
-        fontFamily: 'Courier New',
-        fontWeight: 'bold',
-    },
-    date: {
-        color: '#000',
-        fontSize: 10,
-        fontFamily: 'Courier New',
-        fontWeight: 'bold',
     },
     nameText: {
         color: '#fff',

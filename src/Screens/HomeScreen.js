@@ -5,6 +5,7 @@ import Weather from '../../assets/Weather';
 import UserInfo from '../../assets/UserInfo';
 import { Moon, Rain, Sun, Cloud } from 'svg';
 import bgImg from '../components/BgImg';
+import Header from '../components/Header';
 import { LocalizationContext } from '../components/LocalisationContext';
 
 const weatherIcon = (weatherType) => {
@@ -28,9 +29,7 @@ export default function HomeScreen({navigation}) {
 
     return (
         <>
-            <View style={styles.header}>
-                <Text style={styles.heading}>{translations.Home.weatherTitle}</Text>
-            </View>
+            <Header title={translations.Home.weatherTitle} barColor='#897396' locationEnabled={false} />
             <ImageBackground
                 source={bgImg}
                 style={{
@@ -110,16 +109,6 @@ const styles= StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center'
-    },
-    header: {
-        backgroundColor: '#897396',
-        padding: 15,
-    },
-    heading: {
-        color: '#000',
-        fontSize: 20,
-        fontFamily: 'Courier New',
-        fontWeight: 'bold',
     },
     FeedbackButton: {
         backgroundColor: '#897396',
