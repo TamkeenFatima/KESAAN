@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 
@@ -6,10 +6,12 @@ import HomeScreen from '../Screens/HomeScreen';
 import AdvisoryScreen from '../Screens/AdvisoryScreen';
 import LinksScreen from '../Screens/LinksScreen';
 import FeedbackScreen from '../Screens/FeedbackScreen';
+import { LocalizationContext } from './LocalisationContext';
 
 const Tab = createMaterialBottomTabNavigator();
 
 const BottomTabScreens = () => {
+    const { translations } = useContext(LocalizationContext);
     return (
         <Tab.Navigator
             initialRouteName="Home"
@@ -21,7 +23,7 @@ const BottomTabScreens = () => {
                 component={HomeScreen}
                 options={{
                     title: 'Home',
-                    tabBarLabel: 'Home',
+                    tabBarLabel: translations.home_tab,
                     tabBarColor: '#897396',
                     tabBarIcon: ({ color }) => (
                         <Icon name="home" color={color} size={26} />
@@ -33,7 +35,7 @@ const BottomTabScreens = () => {
                 component={AdvisoryScreen}
                 options={{
                     title: 'Agro-Advisory',
-                    tabBarLabel: 'Advisory',
+                    tabBarLabel: translations.advisory_tab,
                     tabBarColor: '#009387',
                     tabBarIcon: ({ color }) => (
                         <Icon name="information-circle" color={color} size={26} />
@@ -45,7 +47,7 @@ const BottomTabScreens = () => {
                 component={FeedbackScreen}
                 options={{
                     title: 'Feedback',
-                    tabBarLabel: 'Feedback',
+                    tabBarLabel: translations.feedback_tab,
                     tabBarColor: '#d0b206',
                     tabBarIcon: ({ color }) => (
                         <Icon name="chatbox-ellipses" color={color} size={26} />
@@ -57,7 +59,7 @@ const BottomTabScreens = () => {
                 component={LinksScreen}
                 options={{
                     title: 'Useful Links',
-                    tabBarLabel: 'Links',
+                    tabBarLabel: translations.links_tab,
                     tabBarColor: '#d02860',
                     tabBarIcon: ({ color }) => (
                         <Icon name="link" color={color} size={26} />

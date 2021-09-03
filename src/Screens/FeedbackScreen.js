@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
     View,
     Text,
@@ -17,6 +17,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { AirbnbRating } from 'react-native-ratings';
 import { CheckBox } from 'react-native-elements';
 import UserInfo from '../../assets/UserInfo';
+import { LocalizationContext } from '../components/LocalisationContext';
 import Feedback from '../../assets/Feedback';
 
 export default function FeedbackScreen({navigation}) {
@@ -200,11 +201,14 @@ export default function FeedbackScreen({navigation}) {
             console.log(feedback);
         }
     }
+
+    const { translations } = useContext(LocalizationContext);
+
     return (
         <>
             <View style={styles.header}>
                 <View>
-                    <Text style={styles.heading}>Feedback</Text>
+                    <Text style={styles.heading}>{translations.feedbackTitle}</Text>
                 </View>
                 <View>
                     <Text style={styles.location}>{UserInfo.block}, {UserInfo.district}, {UserInfo.state}</Text>

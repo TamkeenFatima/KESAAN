@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet, ImageBackground, useWindowDimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Weather from '../../assets/Weather';
 import UserInfo from '../../assets/UserInfo';
 import { Moon, Rain, Sun, Cloud } from 'svg';
 import bgImg from '../components/BgImg';
+import { LocalizationContext } from '../components/LocalisationContext';
 
 const weatherIcon = (weatherType) => {
     if (weatherType == 'Sunny') {
@@ -23,11 +24,12 @@ const weatherIcon = (weatherType) => {
 
 export default function HomeScreen({navigation}) {
     const { width: windowWidth, height: windowHeight } = useWindowDimensions()
+    const { translations } = useContext(LocalizationContext);
 
     return (
         <>
             <View style={styles.header}>
-                <Text style={styles.heading}>Weather Today</Text>
+                <Text style={styles.heading}>{translations.weatherTitle}</Text>
             </View>
             <ImageBackground
                 source={bgImg}
