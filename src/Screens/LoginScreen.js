@@ -12,10 +12,11 @@ import {
   ImageBackground,
   Alert,
 } from 'react-native';
-
+import { LocalizationContext } from '../components/LocalisationContext';
 import { AuthContext } from '../components/context';
 
 export default function LoginScreen({navigation}) {
+    const { translations } = useContext(LocalizationContext);
     const { logIn } = useContext(AuthContext);
     const [mobileNo, setMobileNo] = useState('');
 
@@ -30,7 +31,7 @@ export default function LoginScreen({navigation}) {
     
     const handleLogIn = () => {
         if( mobileNo.length<10 ) {
-            Alert.alert("Please enter correct mobile number!")
+            Alert.alert(translations.Login.error)
         }
         else {
             logIn(mobileNo);
@@ -62,7 +63,7 @@ export default function LoginScreen({navigation}) {
                                 />
                             </View>
                             <View style={styles.inputBox}>
-                                <Text style={styles.inputLabel}>Mobile</Text>
+                                <Text style={styles.inputLabel}>{translations.Login.mobile}</Text>
                                 <TextInput
                                     style={styles.input}
                                     autoCapitalize='none'
@@ -77,7 +78,7 @@ export default function LoginScreen({navigation}) {
                                 style={styles.loginButton}
                                 onPress={() => {handleLogIn()}}
                             >
-                                <Text style={styles.loginButtonText}>Log In</Text>
+                                <Text style={styles.loginButtonText}>{translations.Login.login}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={()=> {
@@ -85,7 +86,7 @@ export default function LoginScreen({navigation}) {
                                 }}
                             >
                                 <Text style={styles.registerText}>
-                                Don't have an account? Register Now
+                                {translations.Login.noAccount}
                                 </Text>
                             </TouchableOpacity>
                         </View>
