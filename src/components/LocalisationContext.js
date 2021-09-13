@@ -1,45 +1,38 @@
 import React, { createContext, useState } from 'react';
-import translations, { DEFAULT_LANGUAGE } from '../../assets/languages/translations';
+import translations from '../../assets/languages/translations';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as RNLocalize from 'react-native-localize';
 
 const APP_LANGUAGE = 'appLanguage';
 
 export const LocalizationContext = createContext({
   translations,
   setAppLanguage: () => {},
-  appLanguage: DEFAULT_LANGUAGE,
+  appLanguage: '',
   initializeAppLanguage: () => {},
 });
 
 export const LocalizationProvider = ({ children }) => {
-  const [appLanguage, setAppLanguage] = useState(DEFAULT_LANGUAGE);
+  const [appLanguage, setAppLanguage] = useState('');
 
-  const setLanguage = language => {
+  const setLanguage = async (language) => {
     translations.setLanguage(language);
     setAppLanguage(language);
-    AsyncStorage.setItem(APP_LANGUAGE, language);
+    try {
+      await AsyncStorage.setItem(APP_LANGUAGE, language);
+    } catch(e) {
+      console.log(e);
+    }
   };
 
   const initializeAppLanguage = async () => {
-    const currentLanguage = await AsyncStorage.getItem(APP_LANGUAGE);
-
-    if (!currentLanguage) {
-      let localeCode = DEFAULT_LANGUAGE;
-      const supportedLocaleCodes = translations.getAvailableLanguages();
-      const phoneLocaleCodes = RNLocalize.getLocales().map(
-        locale => locale.languageCode,
-      );
-      phoneLocaleCodes.some(code => {
-        if (supportedLocaleCodes.includes(code)) {
-          localeCode = code;
-          return true;
-        }
-      });
-      setLanguage(localeCode);
-    } else {
-      setLanguage(currentLanguage);
+    let currentLanguage;
+    try {
+      currentLanguage = await AsyncStorage.getItem(APP_LANGUAGE);
+    } catch(e) {
+      console.log(e);
     }
+    setLanguage(currentLanguage);
+    translations.setLanguage(currentLanguage);
   };
 
   return (
