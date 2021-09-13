@@ -19,7 +19,6 @@ import { AuthContext } from '../components/context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // import IMEI from 'react-native-imei';
 
-import {statesUTs} from '../../assets/StatesUTs';
 import { LocalizationContext } from '../components/LocalisationContext';
 
 export default function RegisterScreen({navigation}) {
