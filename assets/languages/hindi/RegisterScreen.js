@@ -10,5 +10,6 @@ export default {
     name_phone_empty : 'नाम और फ़ीन नंबर खाली नहीं हो सकता',
     name_empty: 'आपका नाम आवश्यक है!',
     invalid_phone_no : 'अमान्य मोबाइल नंबर। कृपया सही मोबाइल नंबर दर्ज करें।',
+    location_empty: 'कृपया अपना स्थान चुनें!',
     stateSelection: 'राज्य चुनें',
 };
