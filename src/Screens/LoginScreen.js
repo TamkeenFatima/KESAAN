@@ -10,16 +10,31 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   ImageBackground,
+  Alert,
 } from 'react-native';
 
 import { AuthContext } from '../components/context';
 
 export default function LoginScreen({navigation}) {
     const { logIn } = useContext(AuthContext);
-    const [mobileNo, setMobileNo] = useState(0);
+    const [mobileNo, setMobileNo] = useState('');
 
-    const handleLogIn = (mobile) => {
-        logIn(mobile);
+    const mobileNoCheck = (val) => {
+        const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        for ( let i=0; i<numbers.length; i++ ) {
+            if ( i == val.slice(-1) ) {
+                setMobileNo( val )
+          }
+        }
+    }
+    
+    const handleLogIn = () => {
+        if( mobileNo.length<10 ) {
+            Alert.alert("Please enter correct mobile number!")
+        }
+        else {
+            logIn(mobileNo);
+        }
     }
     return (
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -53,12 +68,14 @@ export default function LoginScreen({navigation}) {
                                     autoCapitalize='none'
                                     keyboardType="number-pad"
                                     textContentType='telephoneNumber'
-                                    onChangeText={(value) => setMobileNo(value)}
+                                    maxLength={10}
+                                    onChangeText={(val) => {mobileNoCheck(val)}}
+                                    value={mobileNo}
                                 />
                             </View>
                             <TouchableOpacity
                                 style={styles.loginButton}
-                                onPress={() => {handleLogIn(mobileNo)}}
+                                onPress={() => {handleLogIn()}}
                             >
                                 <Text style={styles.loginButtonText}>Log In</Text>
                             </TouchableOpacity>
