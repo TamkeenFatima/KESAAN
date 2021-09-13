@@ -1,7 +1,6 @@
 import LocalizedStrings from 'react-native-localization';
 import * as en from 'english';
 import * as hi from 'hindi';
-export const DEFAULT_LANGUAGE = 'en';
 
 const translations = {
    en : en,
