@@ -10,5 +10,6 @@ export default {
     name_phone_empty : 'Name and phone number field cannot be empty',
     name_empty : 'Your name is required!',
     invalid_phone_no : 'Invalid mobile number. Please enter correct number.',
-    stateSelection : 'Select State',
+    location_empty : 'Please select your location!',
+    stateSelection : 'Select state',
 };
