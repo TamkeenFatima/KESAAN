@@ -5,13 +5,15 @@ import {
     StyleSheet,
     ImageBackground,
     useWindowDimensions,
-    ScrollView,
     Alert,
 } from 'react-native';
 import bgImg from '../components/BgImg';
 import Header from '../components/Header';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LocalizationContext } from '../components/LocalisationContext';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+
+const Tab = createMaterialTopTabNavigator();
 
 export default function AdvisoryScreen({navigation}) {
     const { translations } = useContext(LocalizationContext);
@@ -93,6 +95,7 @@ export default function AdvisoryScreen({navigation}) {
         )
         .then((response) => response.json())
         .then((response) => {
+            console.log(response)
             setAdvisory({
                 adv_weather: {
                     en: response.adv_weather_en,
@@ -132,66 +135,84 @@ export default function AdvisoryScreen({navigation}) {
     const keys = Object.keys(advisory);
 
     let BgImg = '';
+
+    let current = '';
+    const display = ({ route }) => {
+        current = route.name;
+
+        if ( current === 'adv_weather') {
+            BgImg = bgImg;
+        }
+        if ( current === 'adv_rice') {
+            BgImg = require('../../assets/images/rice.jpg');
+        }
+        else if ( current === 'adv_fodder') {
+            BgImg = require('../../assets/images/fodder.jpg');
+        }
+        else if ( current === 'adv_sugarcane') {
+            BgImg = require('../../assets/images/sugarcane.jpg');
+        }
+        else if ( current === 'adv_vegetables') {
+            BgImg = require('../../assets/images/vegetables.png');
+        }
+        else if ( current === 'adv_cattle') {
+            BgImg = require('../../assets/images/cattle.jpg');
+        }
+        else if ( current === 'adv_gen') {
+            BgImg = require('../../assets/images/general.jpg');
+        }
+
+        let availLang;
+        advisory[current][lang] !== null ? (availLang = lang) : (advisory[current][lang2] !== null ? availLang = lang2 : availLang = '');
+        return (
+            <>
+                {
+                    availLang !== '' ? (
+                        <View
+                            style={{width: windowWidth, height: windowHeight-195.2}} >
+                            <ImageBackground
+                            source={BgImg}
+                            style={{
+                                flex: 1,
+                                }}
+                            >
+                                <View
+                                    style={styles.container}
+                                >
+                                    <View>
+                                        <Text style={styles.nameText}>{translations.Advisory[current]}</Text>
+                                    </View>
+                                    <View style={styles.advisoryContainer}>
+                                        <Text style={styles.advisoryText}>{advisory[current][availLang]}</Text>
+                                    </View>
+                                </View>
+                            </ImageBackground>
+                        </View>
+                    ) : null
+                }
+            </>
+        )
+    }
+
     return (
         <>
             <Header title={translations.Advisory.advisoryTitle} barColor='#009387' />
-            <ScrollView
-                pagingEnabled={true}
-                initialPage={0}
-            >
+            <Tab.Navigator>
                 {keys.map((item, index) => {
-                    if ( item === 'adv_weather') {
-                        BgImg = bgImg;
-                    }
-                    if ( item === 'adv_rice') {
-                        BgImg = require('../../assets/images/rice.jpg');
-                    }
-                    else if ( item === 'adv_fodder') {
-                        BgImg = require('../../assets/images/fodder.jpg');
-                    }
-                    else if ( item === 'adv_sugarcane') {
-                        BgImg = require('../../assets/images/sugarcane.jpg');
-                    }
-                    else if ( item === 'adv_vegetables') {
-                        BgImg = require('../../assets/images/vegetables.png');
-                    }
-                    else if ( item === 'adv_cattle') {
-                        BgImg = require('../../assets/images/cattle.jpg');
-                    }
-                    else if ( item === 'adv_gen') {
-                        BgImg = require('../../assets/images/general.jpg');
-                    }
-                    let availLang;
-                    advisory[item][lang] !== '' ? (availLang = lang) : (advisory[item][lang2] !== '' ? availLang = lang2 : availLang = '');
-
                     return (
-                        availLang !== '' ? (
-                            <View
-                                style={{width: windowWidth, height: windowHeight-195.2}}
-                                key={index}
-                            >
-                                <ImageBackground
-                                source={img}
-                                style={{
-                                    flex: 1,
-                                    }}
-                                >
-                                    <View
-                                        style={styles.container}
-                                    >
-                                        <View>
-                                            <Text style={styles.nameText}>{translations.Advisory[item]}</Text>
-                                        </View>
-                                        <View style={styles.advisoryContainer}>
-                                            <Text style={styles.advisoryText}>{advisory[item][availLang]}</Text>
-                                        </View>
-                                    </View>
-                                </ImageBackground>
-                            </View>
-                        ) : null
+                        ( advisory[item][lang] !== null || advisory[item][lang2] !== null ) ? (
+                        <Tab.Screen
+                            name={item}
+                            component={display}
+                            key={index}
+                            options={{
+                                tabBarLabel: translations.Advisory[item],
+                                tabBarScrollEnabled: true,
+                            }}
+                        />) : null
                     );
                 })}
-            </ScrollView>
+            </Tab.Navigator>
         </>
     );
 }
@@ -220,20 +241,5 @@ const styles= StyleSheet.create({
         fontSize: 14,
         fontFamily: 'Courier New',
         fontWeight: 'bold',
-    },
-    dot: {
-        height: 5,
-        width: 5,
-        borderRadius: 4,
-        marginHorizontal: 4,
-        backgroundColor: '#fff',
-    },
-    dotWrapper: {
-        position: 'absolute',
-        top: 80,
-        right: 40,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
     },
 });
