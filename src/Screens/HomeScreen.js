@@ -113,12 +113,20 @@ export default function HomeScreen({navigation}) {
                 wind: response.wind,
                 weather_type: response.weather_type,
             });
+            storeWeatherType(response.weather_type);
         })
         .catch((error) => {
             Alert.alert("Error" + error);
         })
     }
 
+    const storeWeatherType = async (type) => {
+        try {
+            await AsyncStorage.setItem('weatherType', type);
+        } catch(e) {
+            console.log(e);
+        }
+    }
     useEffect(async() => {
         let info;
         try {
