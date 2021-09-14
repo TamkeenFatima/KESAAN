@@ -1,29 +1,18 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { weatherType } from '../../assets/weatherType';
 
-(async() => {
-    let weatherType;
-    let BgImg;
-    try {
-        weatherType = await AsyncStorage.getItem('weatherType');
-        if ( weatherType == 'Sunny') {
-            BgImg = require('../../assets/images/sunny.png');
-        }
-        else if ( weatherType == 'Rainy') {
-            BgImg = require('../../assets/images/rain.png');
-        }
-        else if ( weatherType == 'Cloudy') {
-            BgImg = require('../../assets/images/cloudy.png');
-        }
-        else if ( weatherType == 'Night') {
-            BgImg = require('../../assets/images/night.jpg');
-        }
-    } catch(e) {
-        console.log(e);
-    }
-    global.BgImg = BgImg;
-})()
+let bgImg;
 
-
-let bgImg = global.BgImg;
+if ( weatherType == 'Sunny') {
+    bgImg = require('../../assets/images/sunny.png');
+}
+else if ( weatherType == 'Rainy') {
+    bgImg = require('../../assets/images/rain.png');
+}
+else if ( weatherType == 'Cloudy') {
+    bgImg = require('../../assets/images/cloudy.png');
+}
+else if ( weatherType == 'Night') {
+    bgImg = require('../../assets/images/night.jpg');
+}
 
 export default bgImg;
