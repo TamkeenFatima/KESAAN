@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-export default function SettingsScreen({ navigation }) {
+export default function SupportScreen({ navigation }) {
     return (
         <View style={styles.container}>
             <View>
@@ -14,9 +14,8 @@ export default function SettingsScreen({ navigation }) {
                 />
             </View>
             <View style={styles.header}>
-                <Text style={styles.heading}>Settings</Text>
+                <Text style={styles.heading}>Support</Text>
             </View>
-            {/* Any setting that has to be added will come here */}
         </View>
     )
 }

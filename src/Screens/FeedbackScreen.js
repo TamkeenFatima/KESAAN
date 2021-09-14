@@ -10,27 +10,98 @@ import {
     TouchableWithoutFeedback,
     Alert,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import RadioButtonRN from 'radio-buttons-react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/Ionicons';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { AirbnbRating } from 'react-native-ratings';
 import { CheckBox } from 'react-native-elements';
-import UserInfo from '../../assets/UserInfo';
+import Header from '../components/Header';
 import { LocalizationContext } from '../components/LocalisationContext';
-import Feedback from '../../assets/Feedback';
 
 export default function FeedbackScreen({navigation}) {
 
-    const keys = Object.keys(Feedback);
+    const [location, setLocation] = useState({
+        state: '',
+        district: '',
+        block: ''
+    });
+
+    const getLocation = (id) => {
+        let LocationAPIURL = "http://10.0.2.2:80/api/get_location.php";
+        
+        let header = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        };
+
+        let Data = {
+            location_id: id,
+        };
+
+        fetch(
+            LocationAPIURL,
+            {
+                method: 'POST',
+                headers: header,
+                body: JSON.stringify(Data)
+            }
+        )
+        .then((response) => response.json())
+        .then((response) => {
+            setLocation({
+                state: response.state_name,
+                district: response.district_name,
+                block: response.block_name,
+            });
+            setFeedback({
+                ...feedback,
+                state_name: response.state_name,
+                district_name: response.district_name,
+                block_name: response.block_name,
+            })
+        })
+        .catch((error) => {
+            Alert.alert("Error" + error);
+        })
+    }
+
+    const[userInfo, setUserInfo] = useState({
+        name: '',
+        mobile: '',
+        location_id: '',
+    });
+
+    useEffect(async() => {
+        let info;
+        try {
+            info = await AsyncStorage.getItem('userInfo')
+        } catch(e) {
+            console.log(e);
+        }
+        info = JSON.parse(info);
+        setUserInfo({...info});
+        setFeedback({
+            ...feedback,
+            location_id: info.location_id,
+            farmer_name: info.name,
+            mobile_num: info.mobile,
+        });
+        getLocation(info.location_id);
+    }, [])
+
+    const { translations } = useContext(LocalizationContext);
+
+    const keys = Object.keys(translations.Feedback.form);
 
     const [feedback, setFeedback] = useState({
-        location_id: 655,
-        farmer_name: UserInfo.name,	
-        state_name: UserInfo.state,
-        district_name: UserInfo.district,
-        block_name: UserInfo.block,
-        mobile_num: UserInfo.mobile,
+        location_id: userInfo.location_id,
+        farmer_name: userInfo.name,	
+        state_name: location.state,
+        district_name: location.district,
+        block_name: location.block,
+        mobile_num: userInfo.mobile,
         age: 0,
         gender: '',
         education: '',
@@ -52,7 +123,7 @@ export default function FeedbackScreen({navigation}) {
         bulletin_received: '',
         sources: '',
         bulletin_timely_issued: '',	
-        feedback_for_bulletin_date: new Date().toString().slice(4,15),
+        feedback_for_bulletin_date: new Date().toISOString().slice(0, 10),
         bulletin_useful: '',	
         bulletin_not_useful: '',
         advice_not_useful: '',
@@ -68,10 +139,13 @@ export default function FeedbackScreen({navigation}) {
     const radioBtn = ( data ) => {
         return (
             <RadioButtonRN
-                data={Feedback[data].options}
+                data={translations.Feedback.form[data].options}
                 selectedBtn={(e) => {
                     let value = {...feedback};
                     value[data] = e.label;
+                    if (data === 'gender') {
+                        value[data] = value[data].charAt(0);
+                    }
                     setFeedback({...value});
                     // console.log(feedback);
                 }}
@@ -114,7 +188,7 @@ export default function FeedbackScreen({navigation}) {
         }
         const newFeedback = { ...feedback };
         for (let key in checkbox) {
-            newFeedback[key] = checkbox[key].join(';');
+            newFeedback[key] = checkbox[key].join('&');
         }
         setFeedback({ ...newFeedback });
     }
@@ -139,9 +213,6 @@ export default function FeedbackScreen({navigation}) {
     }
 
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-    const [date, setDate] = useState({
-        feedback_for_bulletin_date: new Date()
-    });
 
     const showDatePicker = () => {
         setDatePickerVisibility(true);
@@ -153,7 +224,7 @@ export default function FeedbackScreen({navigation}) {
 
     const handleConfirm = (date, item) => {
         let newValue = { ...feedback };
-        newValue[item] = date.toString().slice(4,15);
+        newValue[item] = date.toISOString().slice(0, 10);
         setFeedback({ ...newValue });
         hideDatePicker();
     };
@@ -168,113 +239,133 @@ export default function FeedbackScreen({navigation}) {
     };
 
     let empty = false;
-    useEffect(() => {
+    const checkEmpty = () => {
         for (let key in feedback) {
             if ( (feedback[key] == null)||(feedback[key] == '') ) {
                 empty = true;
                 break;
             }
         }
-    }, [feedback])
+    }
 
     const updateFeedback = () => {
-        const newValue = { ...feedback };
+        let newValue = { ...feedback };
         for (let key in checkbox) {
-            newValue[key] = checkbox[key].join(';');
+            newValue[key] = checkbox[key].join('&');
+        }
+        newValue = {
+            ...newValue,
+            location_id: userInfo.location_id,
+            farmer_name: userInfo.name,	
+            state_name: location.state,
+            district_name: location.district,
+            block_name: location.block,
+            mobile_num: userInfo.mobile,
         }
         setFeedback({ ...newValue });
-        
-        handleSubmit();
+        console.log(newValue);
+        handleSubmit(newValue);
     }
 
-    const handleSubmit = () => {
-        const newValue = { ...feedback };
-        for (let key in checkbox) {
-            newValue[key] = checkbox[key].join(';');
-        }
+    const handleSubmit = (newValue) => {
         setFeedback({ ...newValue });
-        
+        checkEmpty();
         if (empty) {
-            Alert.alert("All questions are mandatory. Please answer them and then submit the form.");
+            Alert.alert(translations.Feedback.incomplete);
+            empty = false;
         }
         else {
-            console.log(feedback);
+            let FeedbackAPIURL = "http://10.0.2.2:80/api/feedback.php";
+
+            let headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            };
+
+            const Data = { ...newValue };
+
+            fetch (FeedbackAPIURL,
+                {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(Data)
+                }
+            )
+            .then((response) => response.json())
+            .then((response) => {
+                console.log(response);
+                Alert.alert(response.Message);
+            })
+            .catch((e) => {
+                console.log(e);
+                Alert.alert("ERROR " + e);
+            })
         }
     }
-
-    const { translations } = useContext(LocalizationContext);
 
     return (
         <>
-            <View style={styles.header}>
-                <View>
-                    <Text style={styles.heading}>{translations.feedbackTitle}</Text>
-                </View>
-                <View>
-                    <Text style={styles.location}>{UserInfo.block}, {UserInfo.district}, {UserInfo.state}</Text>
-                    <Text style={styles.date}>{UserInfo.date}</Text>
-                </View>
-            </View>
+            <Header title={translations.Feedback.feedbackTitle} barColor='#d0b206' />
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
                 <View style={styles.container}>
                     <ScrollView>
                         <View style={styles.centerizedView}>
                             <View style={styles.authBox}>
                                 <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>Name</Text>
+                                    <Text style={styles.inputLabel}>{translations.Feedback.name}</Text>
                                     <TextInput
                                         style={[styles.input, {backgroundColor: '#dfe4ea'}]}
                                         editable={false}
-                                        value={feedback.farmer_name}
+                                        value={userInfo.name}
                                     />
                                 </View>
                                 <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>State</Text>
+                                    <Text style={styles.inputLabel}>{translations.Feedback.state}</Text>
                                     <TextInput
                                         style={[styles.input, {backgroundColor: '#dfe4ea'}]}
                                         editable={false}
-                                        value={feedback.state_name}
+                                        value={location.state}
                                     />
                                 </View>
                                 <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>District</Text>
+                                    <Text style={styles.inputLabel}>{translations.Feedback.district}</Text>
                                     <TextInput
                                         style={[styles.input, {backgroundColor: '#dfe4ea'}]}
                                         editable={false}
-                                        value={feedback.district_name}
+                                        value={location.district}
                                     />
                                 </View>
                                 <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>Block</Text>
+                                    <Text style={styles.inputLabel}>{translations.Feedback.block}</Text>
                                     <TextInput
                                         style={[styles.input, {backgroundColor: '#dfe4ea'}]}
                                         editable={false}
-                                        value={feedback.block_name}
+                                        value={location.block}
                                     />
                                 </View>
                                 <View style={styles.inputBox}>
-                                    <Text style={styles.inputLabel}>Mobile / Whatsapp number</Text>
+                                    <Text style={styles.inputLabel}>{translations.Feedback.mobile}</Text>
                                     <TextInput
                                         style={[styles.input, {backgroundColor: '#dfe4ea'}]}
                                         editable={false}
-                                        value={feedback.mobile_num}
+                                        value={userInfo.mobile}
                                     />
                                 </View>
 
                                 {keys.map((item, index) => {
-                                    if ( Feedback[item].type == 'Radio Button' ) {
+                                    if ( translations.Feedback.form[item].type == 'Radio Button' ) {
                                         return (
                                             <View style={styles.inputBox} key={index}>
-                                                <Text style={styles.inputLabel}>{Feedback[item].q}</Text>
+                                                <Text style={styles.inputLabel}>{translations.Feedback.form[item].q}</Text>
                                                 {radioBtn(item)}
                                             </View>
                                         )
                                     }
-                                    else if ( Feedback[item].type == 'Checkbox' ) {
+                                    else if ( translations.Feedback.form[item].type == 'Checkbox' ) {
                                         return (
                                             <View style={styles.inputBox} key={index}>
-                                                <Text style={styles.inputLabel}>{Feedback[item].q}</Text>
-                                                {Feedback[item].options.map((data, loc) => {
+                                                <Text style={styles.inputLabel}>{translations.Feedback.form[item].q}</Text>
+                                                {translations.Feedback.form[item].options.map((data, loc) => {
                                                     const checked = checkbox[item].includes(data);
                                                     return (
                                                         <CheckBox
@@ -291,25 +382,26 @@ export default function FeedbackScreen({navigation}) {
                                             </View>
                                         )
                                     }
-                                    else if ( Feedback[item].type == 'Text Input' ) {
+                                    else if ( translations.Feedback.form[item].type == 'Text Input' ) {
                                         return (
                                             <View style={styles.inputBox} key={index}>
-                                                <Text style={styles.inputLabel}>{Feedback[item].q}</Text>
+                                                <Text style={styles.inputLabel}>{translations.Feedback.form[item].q}</Text>
                                                 <TextInput
                                                     onFocus={() => {toggleSelection(item)}}
                                                     onBlur={() => {toggleSelection(item)}}
                                                     onChangeText={(val) => {handleTextInputChange(val, item)}}
                                                     style={isSelected[item] ? ([styles.input, {borderWidth: 1, borderColor: '#d0b206', backgroundColor: '#f8f9f8'}]) : (styles.input)}
                                                     autoCapitalize='none'
+                                                    maxLength={translations.Feedback.form[item].max}
                                                     keyboardType={(item === 'age') ? "number-pad" : "default"}
                                                 />
                                             </View>
                                         )
                                     }
-                                    else if ( Feedback[item].type == 'Date' ) {
+                                    else if ( translations.Feedback.form[item].type == 'Date' ) {
                                         return (
                                             <View style={styles.inputBox} key={index}>
-                                                <Text style={styles.inputLabel}>{Feedback[item].q}</Text>
+                                                <Text style={styles.inputLabel}>{translations.Feedback.form[item].q}</Text>
                                                 <TouchableWithoutFeedback
                                                     onPress={() => {
                                                         showDatePicker();
@@ -352,10 +444,10 @@ export default function FeedbackScreen({navigation}) {
                                             </View>
                                         )
                                     }
-                                    else if ( Feedback[item].type == 'Ratings' ) {
+                                    else if ( translations.Feedback.form[item].type == 'Ratings' ) {
                                         return (
                                             <View style={styles.inputBox} key={index}>
-                                                <Text style={styles.inputLabel}>{Feedback[item].q}</Text>
+                                                <Text style={styles.inputLabel}>{translations.Feedback.form[item].q}</Text>
                                                 <AirbnbRating 
                                                     size={20}
                                                     defaultRating={0}
@@ -370,7 +462,7 @@ export default function FeedbackScreen({navigation}) {
                                     }
                                 })}
                                 <TouchableOpacity style={styles.submitButton} onPress={() => {updateFeedback()}}>
-                                    <Text style={styles.submitButtonText}>Submit</Text>
+                                    <Text style={styles.submitButtonText}>{translations.Feedback.submit}</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -382,30 +474,6 @@ export default function FeedbackScreen({navigation}) {
 }
 
 const styles=StyleSheet.create({
-    header: {
-        backgroundColor: '#d0b206',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: 15,
-    },
-    heading: {
-        color: '#000',
-        fontSize: 20,
-        fontFamily: 'Courier New',
-        fontWeight: 'bold',
-    },
-    location: {
-        color: '#000',
-        fontSize: 12,
-        fontFamily: 'Courier New',
-        fontWeight: 'bold',
-    },
-    date: {
-        color: '#000',
-        fontSize: 10,
-        fontFamily: 'Courier New',
-        fontWeight: 'bold',
-    },
     container: {
         flex: 1,
         position: 'relative',
@@ -463,7 +531,7 @@ const styles=StyleSheet.create({
         backgroundColor: '#d0b206',
         marginTop: 10,
         paddingVertical: 10,
-        borderRadius: 4,
+        borderRadius: 20,
     },
     submitButtonText: {
         color: '#fff',

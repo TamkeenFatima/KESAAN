@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
-import { View, Text, StyleSheet, ImageBackground, useWindowDimensions } from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, StyleSheet, ImageBackground, useWindowDimensions, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Weather from '../../assets/Weather';
-import UserInfo from '../../assets/UserInfo';
 import { Moon, Rain, Sun, Cloud } from 'svg';
 import bgImg from '../components/BgImg';
+import Header from '../components/Header';
 import { LocalizationContext } from '../components/LocalisationContext';
 
 const weatherIcon = (weatherType) => {
@@ -26,11 +26,123 @@ export default function HomeScreen({navigation}) {
     const { width: windowWidth, height: windowHeight } = useWindowDimensions()
     const { translations } = useContext(LocalizationContext);
 
+    const [weather, setWeather] = useState({
+        cur_temp: null,
+        max_temp: null,
+        min_temp: null,
+        rain: null,
+        humidity: null,
+        wind: null,
+        weather_type: '',
+    });
+
+    const [location, setLocation] = useState({
+        state: '',
+        district: '',
+        block: ''
+    });
+
+    const getLocation = (id) => {
+        let LocationAPIURL = "http://10.0.2.2:80/api/get_location.php";
+        
+        let header = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        };
+
+        let Data = {
+            location_id: id,
+        };
+
+        fetch(
+            LocationAPIURL,
+            {
+                method: 'POST',
+                headers: header,
+                body: JSON.stringify(Data)
+            }
+        )
+        .then((response) => response.json())
+        .then((response) => {
+            setLocation({
+                state: response.state_name,
+                district: response.district_name,
+                block: response.block_name,
+            });
+        })
+        .catch((error) => {
+            Alert.alert("Error" + error);
+        })
+    }
+
+    const[userInfo, setUserInfo] = useState({
+        name: '',
+        mobile: '',
+        location_id: '',
+    });
+
+    const getWeather = (id) => {
+        let WeatherAPIURL = "http://10.0.2.2:80/api/get_weather.php";
+        
+        let header = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        };
+
+        let Data = {
+            location_id: id,
+            weather_date: new Date().toISOString().slice(0, 10),
+        };
+
+        fetch(
+            WeatherAPIURL,
+            {
+                method: 'POST',
+                headers: header,
+                body: JSON.stringify(Data)
+            }
+        )
+        .then((response) => response.json())
+        .then((response) => {
+            setWeather({
+                cur_temp: response.cur_temp + '\u2103',
+                max_temp: response.max_temp + '\u2103',
+                min_temp: response.min_temp + '\u2103',
+                rain: response.rain,
+                humidity: response.humidity,
+                wind: response.wind,
+                weather_type: response.weather_type,
+            });
+            storeWeatherType(response.weather_type);
+        })
+        .catch((error) => {
+            Alert.alert("Error" + error);
+        })
+    }
+
+    const storeWeatherType = async (type) => {
+        try {
+            await AsyncStorage.setItem('weatherType', type);
+        } catch(e) {
+            console.log(e);
+        }
+    }
+    useEffect(async() => {
+        let info;
+        try {
+            info = await AsyncStorage.getItem('userInfo')
+        } catch(e) {
+            console.log(e);
+        }
+        info = JSON.parse(info);
+        setUserInfo({...info});
+        getLocation(info.location_id);
+        getWeather(info.location_id);
+    }, [])
+
     return (
         <>
-            <View style={styles.header}>
-                <Text style={styles.heading}>{translations.weatherTitle}</Text>
-            </View>
+            <Header title={translations.Home.weatherTitle} barColor='#897396' locationEnabled={false} />
             <ImageBackground
                 source={bgImg}
                 style={{
@@ -46,56 +158,56 @@ export default function HomeScreen({navigation}) {
                 >
                     <View style={styles.topContainer}>
                         <View>
-                            <Text style={styles.location}>{UserInfo.block}, {UserInfo.district}, {UserInfo.state}</Text>
-                            <Text style={styles.time}>{UserInfo.date}</Text>
+                            <Text style={styles.location}>{location.block}, {location.district}, {location.state}</Text>
+                            <Text style={styles.time}>{new Date().toDateString()}</Text>
                         </View>
                         <View>
                             <View style={{flexDirection: 'row',}}>
                                 <View>
-                                    <Text style={styles.temperature}>{Weather.temperature}</Text>
+                                    <Text style={styles.temperature}>{weather.cur_temp}</Text>
                                 </View>
                                 <View style={{paddingLeft: 20, paddingTop: 20}}>
                                     <View style={{flexDirection: 'row'}}>
                                         <Icon name="caret-up" color='#ee8755' size={40} />
-                                        <Text style={[styles.temperature, {fontSize: 30}]}>{Weather.maxTemperature}</Text>
+                                        <Text style={[styles.temperature, {fontSize: 30}]}>{weather.max_temp}</Text>
                                     </View>
                                     <View style={{flexDirection: 'row'}}>
                                         <Icon name="caret-down" color='#55d3ee' size={40} />
-                                        <Text style={[styles.temperature, {fontSize: 30}]}>{Weather.minTemperature}</Text>
+                                        <Text style={[styles.temperature, {fontSize: 30}]}>{weather.min_temp}</Text>
                                     </View>
                                 </View>
                             </View>
                             <View style={{flexDirection: 'row'}}>
-                                {weatherIcon(Weather.weatherType)}
-                                <Text style={styles.weatherType}>   {Weather.weatherType}</Text>
+                                {weatherIcon(weather.weatherType)}
+                                <Text style={styles.weatherType}>   {weather.weatherType}</Text>
                             </View>
                         </View>
                     </View>
                     <View style={styles.bottomContainer}>
                         <View style={{alignItems: 'center'}}>
-                            <Text style={styles.detailsText}>Wind</Text>
-                            <Text style={[styles.detailsText, {fontSize: 24}]}>{Weather.wind}</Text>
-                            <Text style={styles.detailsText}>Km/hr</Text>
+                            <Text style={styles.detailsText}>{translations.Home.wind}</Text>
+                            <Text style={[styles.detailsText, {fontSize: 24}]}>{weather.wind}</Text>
+                            <Text style={styles.detailsText}>{translations.Home.wind_unit}</Text>
                             <View style={styles.bar}>
-                                <View style={{width: Weather.wind/2, height: 5, backgroundColor: '#69F0AE'}} />
+                                <View style={{width: weather.wind/2, height: 5, backgroundColor: '#69F0AE'}} />
                             </View>
                         </View>
                         <View style={{borderRightColor: 'rgba(255, 255, 255, 0.7)', marginRight: 20, borderRightWidth: 1}} />
                         <View style={{alignItems: 'center'}}>
-                            <Text style={styles.detailsText}>Rain</Text>
-                            <Text style={[styles.detailsText, {fontSize: 24}]}>{Weather.rain}</Text>
+                            <Text style={styles.detailsText}>{translations.Home.rain}</Text>
+                            <Text style={[styles.detailsText, {fontSize: 24}]}>{weather.rain}</Text>
                             <Text style={styles.detailsText}>%</Text>
                             <View style={styles.bar}>
-                                <View style={{width: Weather.rain/2, height: 5, backgroundColor: '#F44336'}} />
+                                <View style={{width: weather.rain/2, height: 5, backgroundColor: '#F44336'}} />
                             </View>
                         </View>
                         <View style={{borderRightColor: 'rgba(255, 255, 255, 0.7)', marginRight: 20, borderRightWidth: 1}} />
                         <View style={{alignItems: 'center'}}>
-                            <Text style={styles.detailsText}>Humidity</Text>
-                            <Text style={[styles.detailsText, {fontSize: 24}]}>{Weather.humidity}</Text>
+                            <Text style={styles.detailsText}>{translations.Home.humidity}</Text>
+                            <Text style={[styles.detailsText, {fontSize: 24}]}>{weather.humidity}</Text>
                             <Text style={styles.detailsText}>%</Text>
                             <View style={styles.bar}>
-                                <View style={{width: Weather.humidity/2, height: 5, backgroundColor: '#F44336'}} />
+                                <View style={{width: weather.humidity/2, height: 5, backgroundColor: '#F44336'}} />
                             </View>
                         </View>
                     </View>
@@ -110,16 +222,6 @@ const styles= StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center'
-    },
-    header: {
-        backgroundColor: '#897396',
-        padding: 15,
-    },
-    heading: {
-        color: '#000',
-        fontSize: 20,
-        fontFamily: 'Courier New',
-        fontWeight: 'bold',
     },
     FeedbackButton: {
         backgroundColor: '#897396',

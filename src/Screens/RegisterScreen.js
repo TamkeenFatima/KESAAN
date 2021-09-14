@@ -18,14 +18,16 @@ import DeviceInfo from 'react-native-device-info';
 import { AuthContext } from '../components/context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // import IMEI from 'react-native-imei';
-// import LocationPicker from '../components/LocationPicker';
-import {statesUTs} from '../../assets/StatesUTs';
-import translations from '../../assets/languages/translations';
+
 import { LocalizationContext } from '../components/LocalisationContext';
 
 export default function RegisterScreen({navigation}) {
 
-  const { translations, setAppLanguage } = useContext(LocalizationContext)
+  const { translations, setAppLanguage } = useContext(LocalizationContext);
+
+  const [stateList, setStateList] = useState([]);
+  const [districtList, setDistrictList] = useState([]);
+  const [blockList, setBlockList] = useState([]);
 
   const os = DeviceInfo.getSystemName();
   const version = DeviceInfo.getSystemVersion();
@@ -57,28 +59,23 @@ export default function RegisterScreen({navigation}) {
     })
   }, [])
 
-  useEffect(() => {
-    let currentTime = new Date();
-    currentTime = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds() + ', ' + currentTime.getDate() + '/' + (currentTime.getMonth()+1) + '/' + currentTime.getFullYear()
-    setInfo({
-      ...info,
-      registered_on: currentTime,
-    })
-  }, [handleSubmit])
-
   const { register } = useContext(AuthContext);
 
   const handleSubmit = () => {
     if ( (info.user_name.length == 0) && (info.user_mobile.length == 0) ) {
-      Alert.alert(translations.name_phone_empty)
+      Alert.alert(translations.Register.name_phone_empty)
     }
     else if ( info.user_name.length == 0 ) {
-      Alert.alert(translations.name_empty)
+      Alert.alert(translations.Register.name_empty)
     }
     else if ( info.user_mobile.length <10 ) {
-      Alert.alert(translations.invalid_phone_no)
+      Alert.alert(translations.Register.invalid_phone_no)
+    }
+    else if ( info.location_id === 0 ) {
+      Alert.alert(translations.Register.location_empty)
     }
     else {
+
       register(info);
     }
   }
@@ -107,9 +104,109 @@ export default function RegisterScreen({navigation}) {
     }
   }
 
-  const [ statePickerValue, setStatePickerValue ] = useState('Select State');
-  const [ districtPickerValue, setDistrictPickerValue ] = useState('Select District');
-  const [ blockPickerValue, setBlockPickerValue ] = useState('Select Block');
+  useEffect(() => {
+    let StateAPIURL = "http://10.0.2.2:80/api/get_state.php";
+
+    let header = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    };
+
+    fetch(
+      StateAPIURL,
+        {
+            method: 'POST',
+            headers: header,
+        }
+    )
+    .then((response) => response.json())
+    .then((response) => {
+      let state_list = 
+        response.states.map((state, index) => {
+          return (
+            <Picker.Item label={state.state_name} value={state.state_code} key={index} />
+          )
+        })
+      setStateList(state_list);
+    })
+    .catch((error) => {
+        Alert.alert("Error" + error);
+    })
+  }, []);
+
+  const getDistricts = (state) => {
+    let DistrictAPIURL = "http://10.0.2.2:80/api/get_district.php";
+
+    let header = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    };
+
+    let Data = {
+      state_code: state,
+    };
+
+    fetch(
+      DistrictAPIURL,
+        {
+            method: 'POST',
+            headers: header,
+            body: JSON.stringify(Data)
+        }
+    )
+    .then((response) => response.json())
+    .then((response) => {
+      let district_list = 
+        response.districts.map((district, index) => {
+          return (
+            <Picker.Item label={district.district_name} value={district.district_code} key={index} />
+          )
+        })
+      setDistrictList(district_list);
+    })
+    .catch((error) => {
+        Alert.alert("Error" + error);
+    })
+  };
+
+  const getBlocks = (district) => {
+    let BlockAPIURL = "http://10.0.2.2:80/api/get_block.php";
+
+    let header = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    };
+
+    let Data = {
+      district_code: district,
+    };
+
+    fetch(
+      BlockAPIURL,
+        {
+            method: 'POST',
+            headers: header,
+            body: JSON.stringify(Data)
+        }
+    )
+    .then((response) => response.json())
+    .then((response) => {
+      let block_list = 
+        response.blocks.map((block, index) => {
+          return (
+            <Picker.Item label={block.block_name} value={block.id} key={block.block_code} />
+          )
+        })
+      setBlockList(block_list);
+    })
+    .catch((error) => {
+        Alert.alert("Error" + error);
+    })
+  };
+
+  const [ statePickerValue, setStatePickerValue ] = useState(0);
+  const [ districtPickerValue, setDistrictPickerValue ] = useState(0);
+  const [ blockPickerValue, setBlockPickerValue ] = useState(0);
 
   return (
     
@@ -138,27 +235,29 @@ export default function RegisterScreen({navigation}) {
                     source={require('../../assets/images/Logo.png')}
                    />
               </View>
-              <Text style={styles.registerTitleText}>{translations.registerText}</Text>
+              <Text style={styles.registerTitleText}>{translations.Register.registerText}</Text>
               <View style={styles.hr}></View>
               <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>{translations.registerLanguage}</Text>
-                <Picker
-                  style={styles.picker}
-                  prompt={translations.registerLanguage}
-                  selectedValue={info.sel_lang}
-                  onValueChange={ (itemValue) => {
-                    setInfo({...info, sel_lang: itemValue});
-                    setAppLanguage(itemValue);
-                  }}
-                  backgroundColor='#dfe4ea'
-                >
-                  <Picker.Item label="English" value="en" />
-                  <Picker.Item label="हिंदी" value="hi" />
+                <Text style={styles.inputLabel}>{translations.Register.registerLanguage}</Text>
+                <TouchableOpacity style={[styles.input, {height: 50, alignItems: 'center'}]}>
+                  <Picker
+                    style={styles.picker}
+                    prompt={translations.Register.registerLanguage}
+                    selectedValue={info.sel_lang}
+                    onValueChange={ (itemValue) => {
+                      setInfo({...info, sel_lang: itemValue});
+                      setAppLanguage(itemValue);
+                    }}
+                    backgroundColor='#dfe4ea'
+                  >
+                    <Picker.Item label="English" value="en" />
+                    <Picker.Item label="हिंदी" value="hi" />
 
-                </Picker>
+                  </Picker>
+                </TouchableOpacity>
               </View>
               <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>{translations.registerName}</Text>
+                <Text style={styles.inputLabel}>{translations.Register.registerName}</Text>
                 <TextInput
                   style={styles.input}
                   autoCapitalize='none'
@@ -170,7 +269,7 @@ export default function RegisterScreen({navigation}) {
                 />
               </View>
               <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>{translations.registerMobileNo}</Text>
+                <Text style={styles.inputLabel}>{translations.Register.registerMobileNo}</Text>
                 <TextInput
                   style={styles.input}
                   autoCapitalize='none'
@@ -182,40 +281,66 @@ export default function RegisterScreen({navigation}) {
                 />
               </View>
               <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>{translations.registerState}</Text>
-                <Picker
-                  style={styles.picker}
-                  selectedValue={statePickerValue}
-                  onValueChange={ (itemValue) => setStatePickerValue(itemValue) }
-                  backgroundColor='#dfe4ea'
-                >
-                  {statesUTs.map( (val, index) => <Picker.Item label={val} value={val} key={index} /> )}
-                </Picker>
+                <Text style={styles.inputLabel}>{translations.Register.registerState}</Text>
+                <TouchableOpacity style={[styles.input, {height: 50, alignItems: 'center'}]}>
+                  <Picker
+                    style={styles.picker}
+                    selectedValue={statePickerValue}
+                    onValueChange={ (itemValue) => {
+                      setStatePickerValue(itemValue);
+                      setBlockList([]);
+                      getDistricts(itemValue);
+                    } }
+                    backgroundColor='#dfe4ea'
+                  >
+                    <Picker.Item label="Select state" enabled={false} />
+                    {stateList}
+                  </Picker>
+                </TouchableOpacity>
               </View>
               <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>{translations.registerDistrict}</Text>
-                <TextInput
-                  style={styles.input}
-                  autoCapitalize='none'
-                  keyboardType="default"
-                  textContentType='addressState'
-                />
+                <Text style={styles.inputLabel}>{translations.Register.registerDistrict}</Text>
+                <TouchableOpacity style={[styles.input, {height: 50, alignItems: 'center'}]}>
+                  <Picker
+                    style={styles.picker}
+                    selectedValue={districtPickerValue}
+                    onValueChange={ (itemValue) => {
+                      setDistrictPickerValue(itemValue);
+                      getBlocks(itemValue);
+                    } }
+                    backgroundColor='#dfe4ea'
+                  >
+                    <Picker.Item label="Select district" enabled={false} />
+                    {districtList}
+                  </Picker>
+                </TouchableOpacity>
               </View>
               <View style={styles.inputBox}>
-                <Text style={styles.inputLabel}>{translations.registerBlock}</Text>
-                <TextInput
-                  style={styles.input}
-                  autoCapitalize='none'
-                  keyboardType="default"
-                  textContentType='addressState'
-                />
+                <Text style={styles.inputLabel}>{translations.Register.registerBlock}</Text>
+                <TouchableOpacity style={[styles.input, {height: 50, alignItems: 'center'}]}>
+                  <Picker
+                    style={styles.picker}
+                    selectedValue={blockPickerValue}
+                    onValueChange={ (itemValue) => {
+                      setBlockPickerValue(itemValue);
+                      setInfo({
+                        ...info,
+                        location_id: itemValue,
+                      })
+                    } }
+                    backgroundColor='#dfe4ea'
+                  >
+                    <Picker.Item label="Select block" enabled={false} />
+                    {blockList}
+                  </Picker>
+                </TouchableOpacity>
               </View>
       
               <TouchableOpacity
                 style={styles.registerButton}
                 onPress = {() => {handleSubmit()}}
               >
-                <Text style={styles.registerButtonText}>{translations.registerButton}</Text>
+                <Text style={styles.registerButtonText}>{translations.Register.registerText}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={()=> {
@@ -223,7 +348,7 @@ export default function RegisterScreen({navigation}) {
                 }}
               >
                 <Text style={styles.loginText}>
-                  {translations.registerAccount}
+                  {translations.Register.registerAccount}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -324,14 +449,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   picker: {
-    marginTop: 10,
     width: '100%',
-    height: 60,
+    height: 40,
     color: 'black',
-    borderColor: 'black',
-    borderWidth: 20,
-    borderRadius: 4,
-    paddingHorizontal: 10,
   },
   registerButton: {
     backgroundColor: '#ff4757',
