@@ -131,33 +131,6 @@ export default function AdvisoryScreen({navigation}) {
 
     const keys = Object.keys(advisory);
 
-    const display = (index, item, img, language) => {
-        return (
-            <View
-                style={{width: windowWidth, height: windowHeight-195.2}}
-                key={index}
-            >
-                <ImageBackground
-                source={img}
-                style={{
-                    flex: 1,
-                    }}
-                >
-                    <View
-                        style={styles.container}
-                    >
-                        <View>
-                            <Text style={styles.nameText}>{translations.Advisory[item]}</Text>
-                        </View>
-                        <View style={styles.advisoryContainer}>
-                            <Text style={styles.advisoryText}>{advisory[item][language]}</Text>
-                        </View>
-                    </View>
-                </ImageBackground>
-            </View>
-        );
-    };
-
     let BgImg = '';
     return (
         <>
@@ -189,10 +162,33 @@ export default function AdvisoryScreen({navigation}) {
                         BgImg = require('../../assets/images/general.jpg');
                     }
                     let availLang;
-                    advisory[item][lang] != null ? (availLang = lang) : (advisory[item][lang2] != null ? availLang = lang2 : availLang = '');
+                    advisory[item][lang] !== '' ? (availLang = lang) : (advisory[item][lang2] !== '' ? availLang = lang2 : availLang = '');
 
                     return (
-                        availLang !== '' ? display(index, item, BgImg, availLang) : null
+                        availLang !== '' ? (
+                            <View
+                                style={{width: windowWidth, height: windowHeight-195.2}}
+                                key={index}
+                            >
+                                <ImageBackground
+                                source={img}
+                                style={{
+                                    flex: 1,
+                                    }}
+                                >
+                                    <View
+                                        style={styles.container}
+                                    >
+                                        <View>
+                                            <Text style={styles.nameText}>{translations.Advisory[item]}</Text>
+                                        </View>
+                                        <View style={styles.advisoryContainer}>
+                                            <Text style={styles.advisoryText}>{advisory[item][availLang]}</Text>
+                                        </View>
+                                    </View>
+                                </ImageBackground>
+                            </View>
+                        ) : null
                     );
                 })}
             </ScrollView>
